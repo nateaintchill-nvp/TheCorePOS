@@ -12,6 +12,10 @@
 tailwind.config={theme:{extend:{colors:{moss:'#4A5D4E',cream:'#F4F1EA',wood:'#2C1E16','wood-light':'#3d2b21'},fontFamily:{sans:['Montserrat','sans-serif']}}}}
 </script>
 <style>
+h1,h2,h3{text-wrap:balance}p{text-wrap:pretty}
+button{white-space:nowrap}.item-card{white-space:normal}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+@media (min-width:768px){.menu-grid{grid-template-columns:repeat(auto-fill,minmax(175px,1fr))}.item-card{padding:14px;min-height:96px}.item-card .nm{font-size:15px}}
 #cart-panel{display:none}
 @media (min-width:768px){#cart-panel{display:flex}}
 @media (max-width:767px){#cart-panel.open{display:flex;position:fixed;inset:0;z-index:40}}
@@ -30,10 +34,10 @@ button:focus-visible,input:focus-visible{outline:2px solid #4A5D4E;outline-offse
   <div class="flex flex-col items-center pt-3 pb-2 px-4">
     <img src="1000007005.png" alt="The Core" class="max-h-[36px] object-contain mb-2" onerror="this.outerHTML='<div class=&quot;font-extrabold tracking-[.3em] mb-2&quot;>THE CORE</div>'">
     <nav class="grid grid-cols-4 gap-1 w-full max-w-md md:max-w-none md:flex md:justify-center md:gap-2 pb-1">
-      <button onclick="switchTab('pos')" id="btn-tab-pos" class="tab-btn px-1 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-full font-bold text-[11px] md:text-sm whitespace-nowrap flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1"><i class="fa-solid fa-cash-register text-base md:text-sm"></i><span>Bán hàng</span></button>
-      <button onclick="switchTab('menu')" id="btn-tab-menu" class="tab-btn px-1 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-full font-bold text-[11px] md:text-sm whitespace-nowrap flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1"><i class="fa-solid fa-book-open text-base md:text-sm"></i><span>Menu</span></button>
-      <button onclick="switchTab('stock')" id="btn-tab-stock" class="tab-btn px-1 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-full font-bold text-[11px] md:text-sm whitespace-nowrap flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1"><i class="fa-solid fa-box-archive text-base md:text-sm"></i><span>Kho</span></button>
-      <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn px-1 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-full font-bold text-[11px] md:text-sm whitespace-nowrap flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1"><i class="fa-solid fa-clock-rotate-left text-base md:text-sm"></i><span>Lịch sử</span></button>
+      <button onclick="switchTab('pos')" id="btn-tab-pos" class="tab-btn px-1 py-1.5 md:px-5 md:py-2.5 rounded-xl md:rounded-full font-bold text-[11px] md:text-base whitespace-nowrap flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1"><i class="fa-solid fa-cash-register text-base md:text-sm"></i><span>Bán hàng</span></button>
+      <button onclick="switchTab('menu')" id="btn-tab-menu" class="tab-btn px-1 py-1.5 md:px-5 md:py-2.5 rounded-xl md:rounded-full font-bold text-[11px] md:text-base whitespace-nowrap flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1"><i class="fa-solid fa-book-open text-base md:text-sm"></i><span>Menu</span></button>
+      <button onclick="switchTab('stock')" id="btn-tab-stock" class="tab-btn px-1 py-1.5 md:px-5 md:py-2.5 rounded-xl md:rounded-full font-bold text-[11px] md:text-base whitespace-nowrap flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1"><i class="fa-solid fa-box-archive text-base md:text-sm"></i><span>Kho</span></button>
+      <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn px-1 py-1.5 md:px-5 md:py-2.5 rounded-xl md:rounded-full font-bold text-[11px] md:text-base whitespace-nowrap flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1"><i class="fa-solid fa-clock-rotate-left text-base md:text-sm"></i><span>Lịch sử</span></button>
     </nav>
   </div>
 </header>
@@ -54,11 +58,11 @@ button:focus-visible,input:focus-visible{outline:2px solid #4A5D4E;outline-offse
     </div>
     <div class="flex-1 overflow-y-auto p-3 bg-cream/50"><div id="pos-menu-grid" class="space-y-5 pb-28 md:pb-6"></div></div>
     <button id="cart-bar" onclick="toggleCart(true)" class="md:hidden absolute left-3 right-3 bottom-3 bg-moss text-cream rounded-2xl px-4 py-3.5 flex justify-between items-center shadow-xl active:scale-[.98] transition" style="margin-bottom:env(safe-area-inset-bottom)">
-      <span class="font-bold"><i class="fa-solid fa-cart-shopping mr-2"></i><span id="bar-label">Chưa có món</span></span><span id="bar-total" class="font-extrabold">0đ</span>
+      <span class="font-bold min-w-0 truncate pr-2"><i class="fa-solid fa-cart-shopping mr-2"></i><span id="bar-label">Chưa có món</span></span><span id="bar-total" class="font-extrabold flex-shrink-0">0đ</span>
     </button>
   </div>
 
-  <div id="cart-panel" class="w-full md:w-[340px] lg:w-[380px] md:h-full flex-col bg-white shadow-xl min-h-0">
+  <div id="cart-panel" class="w-full md:w-[360px] lg:w-[400px] md:h-full flex-col bg-white shadow-xl min-h-0">
     <div class="px-4 py-3 bg-moss text-cream flex justify-between items-center">
       <h2 class="font-extrabold flex items-center"><button onclick="toggleCart(false)" class="md:hidden w-9 h-9 -ml-2 mr-1 rounded-full" aria-label="Quay lại"><i class="fa-solid fa-chevron-down"></i></button><i class="fa-solid fa-cart-shopping mr-2 hidden md:inline"></i> Đơn hiện tại</h2>
       <div class="flex items-center gap-2">
@@ -130,7 +134,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #4A5D4E;outline-offse
   <div class="bg-cream rounded-3xl shadow-2xl max-w-md w-full overflow-hidden flex flex-col max-h-[92vh]">
     <div class="bg-moss p-4 text-center"><h3 class="text-lg font-extrabold text-cream">Xác nhận thanh toán</h3></div>
     <div class="p-5 overflow-y-auto no-scrollbar">
-      <p class="text-center text-wood/70 text-sm font-semibold"><span id="modal-table"></span> • Tổng cần thu</p>
+      <p class="text-center text-wood/70 text-sm font-semibold whitespace-nowrap"><span id="modal-table"></span> • Tổng cần thu</p>
       <p class="text-center text-4xl font-extrabold text-moss mb-4" id="modal-pay-amount">0đ</p>
       <div id="method-grid" class="grid grid-cols-2 gap-3 mb-4">
         <label class="cursor-pointer"><input type="radio" name="pay_method" value="Tiền mặt" class="peer sr-only" checked onchange="toggleQR()">
@@ -241,6 +245,7 @@ const $=id=>document.getElementById(id);
 const money=v=>Math.round(v*1000).toLocaleString('vi-VN')+'đ';
 const today=()=>new Date().toLocaleDateString('en-CA');
 const fmtDate=d=>d.split('-').reverse().join('/');
+const fmtName=n=>{const m=n.match(/^(.+?)(?: — |\s(?=\())(.+)$/);return m?`${esc(m[1])}<span class="block text-[11px] font-semibold text-wood/55">${esc(m[2])}</span>`:esc(n)};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function save(){try{localStorage.setItem(KEY,JSON.stringify({carts:State.carts,history:State.history,stock:State.stock,discounts:State.discounts}))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){Object.assign(State.carts,d.carts||{});State.history=d.history||[];State.stock=d.stock||{};State.discounts=d.discounts||{}}}catch(e){}}
@@ -285,8 +290,8 @@ function renderPOSMenu(){
     if(State.cat!=='Tất cả'&&State.cat!==c.category)return;
     const items=c.items.map((it,ii)=>[it,ii]).filter(([it])=>!q||(it[0]+' '+it[2]).toLowerCase().includes(q));
     if(!items.length)return;
-    html+=`<div><h3 class="font-extrabold text-moss mb-2">${c.category} <span class="text-wood/40 text-xs font-medium ml-1">${c.sub}</span></h3><div class="grid grid-cols-2 min-[900px]:grid-cols-3 gap-2">`+
-    items.map(([it,ii])=>`<button onclick="addToCart(${ci},${ii})" class="item-card text-left bg-white rounded-xl border border-wood/10 p-3 shadow-sm transition flex flex-col justify-between min-h-[78px]"><span class="font-bold text-sm leading-tight">${esc(it[0])}</span><span class="text-moss font-extrabold mt-2">${money(it[1])}</span></button>`).join('')+`</div></div>`;
+    html+=`<div><h3 class="font-extrabold text-moss">${c.category}</h3><p class="text-xs text-wood/50 mb-2">${c.sub}</p><div class="menu-grid gap-2">`+
+    items.map(([it,ii])=>`<button onclick="addToCart(${ci},${ii})" class="item-card text-left bg-white rounded-xl border border-wood/10 p-3 shadow-sm transition flex flex-col justify-between min-h-[78px]"><span class="nm font-bold text-sm leading-tight">${fmtName(it[0])}</span><span class="text-moss font-extrabold mt-2">${money(it[1])}</span></button>`).join('')+`</div></div>`;
   });
   $('pos-menu-grid').innerHTML=html||'<p class="text-center text-wood/40 py-10">Không tìm thấy món nào.</p>';
 }
@@ -322,9 +327,9 @@ function setDiscount(p){if(p)State.discounts[State.activeTable]=p;else delete St
 function updateCartUI(){
   const cart=State.carts[State.activeTable];$('current-table-label').innerText=State.activeTable;
   $('cart-items').innerHTML=cart.length?cart.map((x,i)=>`<div class="flex items-center gap-2 bg-cream/60 rounded-xl p-2">
-    <div class="flex-1 min-w-0"><p class="font-bold text-sm truncate">${esc(x.name)}</p><p class="text-xs text-wood/60">${money(x.price)}</p></div>
-    <div class="flex items-center gap-1"><button onclick="changeQty(${i},-1)" class="w-8 h-8 rounded-full bg-white border border-wood/20 font-bold">−</button><span class="w-6 text-center font-bold text-sm">${x.qty}</span><button onclick="changeQty(${i},1)" class="w-8 h-8 rounded-full bg-moss text-cream font-bold">+</button></div>
-    <span class="w-20 text-right font-bold text-sm">${money(x.price*x.qty)}</span></div>`).join('')
+    <div class="flex-1 min-w-0"><p class="font-bold text-sm leading-tight">${fmtName(x.name)}</p><p class="text-xs text-wood/60">${money(x.price)}</p></div>
+    <div class="flex items-center gap-1"><button onclick="changeQty(${i},-1)" class="w-9 h-9 md:w-10 md:h-10 flex-shrink-0 rounded-full bg-white border border-wood/20 font-bold">−</button><span class="w-6 text-center font-bold text-sm">${x.qty}</span><button onclick="changeQty(${i},1)" class="w-9 h-9 md:w-10 md:h-10 flex-shrink-0 rounded-full bg-moss text-cream font-bold">+</button></div>
+    <span class="min-w-[5rem] whitespace-nowrap text-right font-bold text-sm">${money(x.price*x.qty)}</span></div>`).join('')
     :'<div class="h-full flex flex-col items-center justify-center text-wood/30 py-6"><i class="fa-solid fa-martini-glass-empty text-4xl mb-2"></i><p class="text-sm font-medium">Chạm vào món để thêm vào đơn</p></div>';
   const n=cart.reduce((a,x)=>a+x.qty,0);
   $('bar-label').innerText=n?`${State.activeTable} • ${n} món — Xem đơn`:`${State.activeTable} • Chưa có món`;$('bar-total').innerText=money(totals(cart).t);
@@ -362,14 +367,14 @@ function confirmPayment(){
 function renderVisualMenu(){
   $('visual-menu-container').innerHTML=MENU_DATA.map(c=>`<div class="break-inside-avoid mb-8">
     <h3 class="font-extrabold text-moss text-lg">${c.category}</h3><p class="text-xs text-wood/50 mb-3 pb-2 border-b border-wood/15">${c.sub}</p>
-    ${c.items.map(it=>`<div class="mb-2.5"><div class="flex justify-between gap-3 font-bold text-sm"><span>${esc(it[0])}</span><span class="text-moss">${it[1].toLocaleString('vi-VN')}</span></div>${it[2]?`<p class="text-xs text-wood/55 leading-snug">${esc(it[2])}</p>`:''}</div>`).join('')}</div>`).join('');
+    ${c.items.map(it=>`<div class="mb-2.5"><div class="flex justify-between gap-3 font-bold text-sm"><span class="min-w-0">${fmtName(it[0])}</span><span class="text-moss flex-shrink-0 whitespace-nowrap">${it[1].toLocaleString('vi-VN')}</span></div>${it[2]?`<p class="text-xs text-wood/55 leading-snug">${esc(it[2])}</p>`:''}</div>`).join('')}</div>`).join('');
 }
 
 // ===== KHO =====
 function renderStockInputs(){
   $('stock-inputs-container').innerHTML=Object.entries(STOCK_GROUPS).map(([g,list])=>`<div><h3 class="font-extrabold text-moss text-sm mb-2">${g}</h3><div class="space-y-1.5">`+
     list.map(n=>`<div class="flex items-center justify-between gap-3 bg-cream/50 rounded-xl px-3 py-2"><span class="font-semibold text-sm">${esc(n)}</span>
-    <input type="number" min="0" inputmode="decimal" data-stock="${esc(n)}" value="${State.stock[n]??''}" oninput="State.stock[this.dataset.stock]=this.value;save()" placeholder="0" class="w-24 text-right bg-white border border-wood/20 rounded-lg px-3 py-1.5 font-bold"></div>`).join('')+`</div></div>`).join('');
+    <input type="number" min="0" inputmode="decimal" data-stock="${esc(n)}" value="${State.stock[n]??''}" oninput="State.stock[this.dataset.stock]=this.value;save()" placeholder="0" class="w-24 md:w-32 text-right bg-white border border-wood/20 rounded-lg px-3 py-1.5 font-bold"></div>`).join('')+`</div></div>`).join('');
 }
 function confirmShiftClose(){
   const filled=Object.entries(State.stock).filter(([,v])=>v!==''&&v!=null);
@@ -390,10 +395,10 @@ function renderHistoryTab(){
     const day=State.history.filter(h=>h.date===d),rev=day.filter(h=>h.type==='order').reduce((a,h)=>a+h.total,0);
     return `<div><div class="flex justify-between items-baseline mb-2 px-1"><h3 class="font-extrabold text-wood">${fmtDate(d)}</h3><span class="text-moss font-bold text-sm">${money(rev)}</span></div><div class="space-y-2">`+
     day.map(h=>h.type==='order'?`<details class="bg-white rounded-xl border border-wood/10 shadow-sm"><summary class="flex justify-between items-center p-3 cursor-pointer list-none">
-      <span><span class="font-bold">${esc(h.table)}</span> <span class="text-xs text-wood/50 ml-1">${h.time} • ${h.method}</span></span><span class="font-extrabold text-moss">${money(h.total)}</span></summary>
+      <span class="whitespace-nowrap"><span class="font-bold">${esc(h.table)}</span> <span class="text-xs text-wood/50 ml-1">${h.time} • ${h.method}</span></span><span class="font-extrabold text-moss">${money(h.total)}</span></summary>
       <div class="px-3 pb-3 text-sm space-y-1 border-t border-wood/10 pt-2">${h.items.map(x=>`<div class="flex justify-between"><span>${x.qty} × ${esc(x.name)}</span><span>${money(x.price*x.qty)}</span></div>`).join('')}
       ${h.discount?`<div class="flex justify-between text-red-700 text-xs pt-1"><span>${h.discPct===100?'On the house':'Giảm '+h.discPct+'%'}</span><span>−${money(h.discount)}</span></div>`:''}<div class="flex justify-between text-wood/60 text-xs pt-1"><span>VAT 10%</span><span>${money(h.vat)}</span></div></div></details>`
-    :`<details class="bg-wood/5 rounded-xl border border-wood/15"><summary class="p-3 cursor-pointer list-none font-bold"><i class="fa-solid fa-lock mr-2 text-moss"></i>Chốt ca <span class="text-xs text-wood/50 ml-1">${h.time} • ${Object.keys(h.stock).length} mục kho</span></summary>
+    :`<details class="bg-wood/5 rounded-xl border border-wood/15"><summary class="p-3 cursor-pointer list-none font-bold"><i class="fa-solid fa-lock mr-2 text-moss"></i>Chốt ca <span class="text-xs text-wood/50 ml-1 whitespace-nowrap">${h.time} • ${Object.keys(h.stock).length} mục kho</span></summary>
       <div class="px-3 pb-3 text-sm grid grid-cols-2 gap-x-4 gap-y-1 border-t border-wood/10 pt-2">${Object.entries(h.stock).map(([k,v])=>`<div class="flex justify-between"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div></details>`).join('')+`</div></div>`;
   }).join('');
 }
