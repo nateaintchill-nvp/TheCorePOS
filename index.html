@@ -445,7 +445,25 @@ function showToast(msg,type='success'){
   setTimeout(()=>t.classList.remove('translate-x-full','opacity-0'),10);
   setTimeout(()=>{t.classList.add('translate-x-full','opacity-0');setTimeout(()=>t.remove(),300)},2500);
 }
-  // ===== POS =====
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded',()=>{
+  initAuth();renderTableSelector();renderChips();renderPOSMenu();renderVisualMenu();renderStockInputs();updateCartUI();switchTab('pos');
+  ['payment-modal','export-modal','confirm-modal'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target.id===id)$(id).classList.replace('flex','hidden')}));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePaymentModal();closeExportModal();closeConfirm();toggleCart(false)}});
+  window.addEventListener('popstate',e=>{if($('cart-panel').classList.contains('open')){toggleCart(false,true);return}switchTab((e.state&&e.state.tab)||'pos',true)});
+});
+let curTab='pos';
+function switchTab(id,fromPop){
+  if(!fromPop&&id!==curTab)history.pushState({tab:id},'');curTab=id;
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('bg-moss','text-cream');b.classList.add('hover:bg-wood-light')});
+  $('tab-'+id).classList.remove('hidden');
+  const b=$('btn-tab-'+id);b.classList.remove('hover:bg-wood-light');b.classList.add('bg-moss','text-cream');
+  if(id==='history')renderHistoryTab();
+}
+
+// ===== POS =====
 function renderTableSelector(){
   $('table-selector').innerHTML=TABLES.map(t=>`<button onclick="selectTable('${t}')" class="px-4 py-1.5 rounded-full font-bold text-sm whitespace-nowrap border-2 transition ${t===State.activeTable?'bg-moss text-cream border-moss':'bg-white text-wood/60 border-wood/20'}">${t}${State.carts[t].length?'<span class="ml-1.5 w-2 h-2 inline-block bg-red-500 rounded-full"></span>':''}</button>`).join('');
 }
@@ -555,7 +573,6 @@ function confirmShiftClose(){
     save();showToast('Đã chốt ca hôm nay');switchTab('history');
   },'Chốt ca');
 }
-
 // ===== LỊCH SỬ =====
 function renderHistoryTab(){
   const orders=State.history.filter(h=>h.type==='order');
@@ -600,3 +617,4 @@ function confirmExportPDF(){
 </script>
 </body>
 </html>
+
