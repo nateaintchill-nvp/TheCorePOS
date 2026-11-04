@@ -64,11 +64,6 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
   <div class="relative flex-1 flex flex-col min-h-0 h-full md:border-r border-wood/20">
     <div class="bg-white px-3 pt-3 pb-2 border-b border-wood/10 space-y-2">
       <div class="flex overflow-x-auto no-scrollbar gap-2" id="table-selector"></div>
-      <div class="relative">
-        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-wood/40 text-sm"></i>
-        <button id="search-clear" onclick="$('search').value='';this.classList.add('hidden');renderPOSMenu()" class="hidden absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 text-wood/50" aria-label="Xóa tìm kiếm"><i class="fa-solid fa-xmark"></i></button>
-        <input id="search" oninput="$('search-clear').classList.toggle('hidden',!this.value);renderPOSMenu()" placeholder="Tìm món…" class="w-full bg-cream rounded-full pl-9 pr-4 py-2.5 text-base font-medium border border-wood/10">
-      </div>
       <div class="flex overflow-x-auto no-scrollbar gap-2" id="cat-chips"></div>
     </div>
     <div class="flex-1 overflow-y-auto p-3 bg-cream/50"><div id="pos-menu-grid" class="space-y-5 pb-28 md:pb-6"></div></div>
@@ -97,7 +92,7 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
   </div>
 </section>
 
-<!-- MENU -->
+<!-- MENU →
 <section id="tab-menu" class="tab-content hidden h-full overflow-y-auto no-scrollbar p-4 md:p-10">
   <div class="max-w-4xl mx-auto mb-3"><button onclick="switchTab('pos')" class="flex-shrink-0 px-3 py-2 rounded-full bg-white border border-wood/20 font-bold text-sm active:scale-95 transition"><i class="fa-solid fa-arrow-left mr-1"></i>Bán hàng</button></div>
   <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-lg border border-wood/10">
@@ -179,7 +174,7 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
 
 </main>
 
-<!-- Payment →
+<!-- Payment -->
 <div id="payment-modal" class="fixed inset-0 bg-wood/80 backdrop-blur-sm hidden z-50 justify-center items-center p-3">
   <div id="pay-card" class="bg-cream rounded-3xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden" style="max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)">
     <div class="bg-moss px-4 py-3 text-center flex-shrink-0"><h3 class="text-lg font-extrabold text-cream">Xác nhận thanh toán</h3></div>
@@ -315,7 +310,7 @@ const TABLES=['Bàn 1','Bàn 2','Bàn 3','Bàn 4','Bàn 5','B1','B2','B3'];
 const VAT=0.1; let KEY='',SESSION=null;
 // Dán URL Firebase Realtime Database vào đây để đồng bộ nhiều thiết bị, ví dụ: 'https://ten-du-an-default-rtdb.firebaseio.com'
 const CLOUD_DEFAULT='';let CLOUD_URL=CLOUD_DEFAULT;try{CLOUD_URL=localStorage.getItem('thecore_cloud_url')||CLOUD_DEFAULT}catch(e){}
-const State={activeTable:TABLES[0],carts:{},history:[],cat:'Tất cả',stock:{},discounts:{},tabTs:{},stockTs:0};
+const State={activeTable:TABLES[0],carts:{},history:[],cat:'Tất cả',stock:{},stockItems:{},discounts:{},tabTs:{},stockTs:0};
 const DISCOUNTS=[0,5,10,15,20,30,40,50,100];
 TABLES.forEach(t=>State.carts[t]=[]);
 
@@ -326,16 +321,17 @@ const today=()=>new Date().toLocaleDateString('en-CA');
 const fmtDate=d=>d.split('-').reverse().join('/');
 const fmtName=n=>{const m=n.match(/^(.+?)(?: — |\s(?=\())(.+)$/);return m?`${esc(m[1])}<span class="block text-[11px] font-semibold text-wood/55">${esc(m[2])}</span>`:esc(n)};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const snap=()=>({carts:State.carts,history:State.history,stock:State.stock,discounts:State.discounts,updatedAt:State.updatedAt||0,clearedAt:State.clearedAt||0,tabTs:State.tabTs,stockTs:State.stockTs});
+const snap=()=>({carts:State.carts,history:State.history,stock:State.stock,stockItems:State.stockItems,discounts:State.discounts,updatedAt:State.updatedAt||0,clearedAt:State.clearedAt||0,tabTs:State.tabTs,stockTs:State.stockTs});
 function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(snap()))}catch(e){}}
-function applySnap(d){TABLES.forEach(t=>State.carts[t]=(d.carts&&d.carts[t])||[]);State.history=d.history||[];State.stock=d.stock||{};State.discounts=d.discounts||{};State.updatedAt=d.updatedAt||0;State.clearedAt=d.clearedAt||0;State.tabTs=d.tabTs||{};State.stockTs=d.stockTs||0;primeSig()}
+function applySnap(d){TABLES.forEach(t=>State.carts[t]=(d.carts&&d.carts[t])||[]);State.history=d.history||[];State.stock=d.stock||{};State.stockItems=d.stockItems||{};State.discounts=d.discounts||{};State.updatedAt=d.updatedAt||0;State.clearedAt=d.clearedAt||0;State.tabTs=d.tabTs||{};State.stockTs=d.stockTs||0;primeSig()}
 let lastSig={};
+const stockSig=()=>JSON.stringify([State.stock,State.stockItems]);
 const sigOf=t=>JSON.stringify([State.carts[t],State.discounts[t]||0]);
-function primeSig(){TABLES.forEach(t=>lastSig[t]=sigOf(t));lastSig.stock=JSON.stringify(State.stock)}
+function primeSig(){TABLES.forEach(t=>lastSig[t]=sigOf(t));lastSig.stock=stockSig()}
 function trackChanges(){
   const now=Date.now();
   TABLES.forEach(t=>{const sg=sigOf(t);if(lastSig[t]!==sg){State.tabTs[t]=now;lastSig[t]=sg}});
-  const ss=JSON.stringify(State.stock);if(lastSig.stock!==ss){State.stockTs=now;lastSig.stock=ss}
+  const ss=stockSig();if(lastSig.stock!==ss){State.stockTs=now;lastSig.stock=ss}
 }
 function save(){if(!SESSION)return;trackChanges();State.updatedAt=Date.now();persistLocal();schedulePush()}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d)applySnap(d)}catch(e){}}
@@ -364,9 +360,9 @@ function mergeIn(c,ts){
   if(h.length!==State.history.length)ch=true;State.history=h;
   if(c.tabTs){
     TABLES.forEach(t=>{const rt=c.tabTs[t]||0;if(rt>(State.tabTs[t]||0)){State.carts[t]=(c.carts&&c.carts[t])||[];if(c.discounts&&c.discounts[t])State.discounts[t]=c.discounts[t];else delete State.discounts[t];State.tabTs[t]=rt;ch=true}});
-    if((c.stockTs||0)>State.stockTs){State.stock=c.stock||{};State.stockTs=c.stockTs;ch=true}
+    if((c.stockTs||0)>State.stockTs){State.stock=c.stock||{};State.stockItems=c.stockItems||{};State.stockTs=c.stockTs;ch=true}
     if(ts>(State.updatedAt||0))State.updatedAt=ts;
-  }else if(ts>(State.updatedAt||0)){TABLES.forEach(t=>State.carts[t]=(c.carts&&c.carts[t])||[]);State.stock=c.stock||{};State.discounts=c.discounts||{};State.updatedAt=ts;ch=true}
+  }else if(ts>(State.updatedAt||0)){TABLES.forEach(t=>State.carts[t]=(c.carts&&c.carts[t])||[]);State.stock=c.stock||{};State.stockItems=c.stockItems||{};State.discounts=c.discounts||{};State.updatedAt=ts;ch=true}
   if(ch)primeSig();
   return ch;
 }
@@ -382,7 +378,7 @@ async function pullMerge(){
 }
 function refreshAll(){
   renderTableSelector();updateCartUI();
-  const a=document.activeElement;if(!(a&&a.dataset&&a.dataset.stock))renderStockInputs();
+  const a=document.activeElement;if(!(a&&a.dataset&&(a.dataset.stock||a.dataset.addstock!=null)))renderStockInputs();
   if(curTab==='history')renderHistoryTab();
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)pullMerge()});
@@ -395,7 +391,7 @@ function getSyncCode(){
 }
 function startApp(){
   const code=getSyncCode();SESSION={id:code};KEY='thecore_pos_v4';
-  TABLES.forEach(t=>State.carts[t]=[]);State.history=[];State.stock={};State.discounts={};State.updatedAt=0;State.clearedAt=0;State.tabTs={};State.stockTs=0;
+  TABLES.forEach(t=>State.carts[t]=[]);State.history=[];State.stock={};State.stockItems={};State.discounts={};State.updatedAt=0;State.clearedAt=0;State.tabTs={};State.stockTs=0;
   let has=false;try{has=!!localStorage.getItem(KEY)}catch(e){}
   if(has)load();
   else{try{for(const k of['thecore_pos_v3_'+code,'thecore_pos_v2']){const o=localStorage.getItem(k);if(o){applySnap(JSON.parse(o));persistLocal();break}}}catch(e){}}
@@ -464,15 +460,15 @@ function renderChips(){
   $('cat-chips').innerHTML=cats.map(c=>`<button onclick="State.cat='${c.replace(/'/g,"\\'")}';renderChips();renderPOSMenu()" class="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border ${c===State.cat?'bg-wood text-cream border-wood':'bg-white text-wood/70 border-wood/20'}">${c}</button>`).join('');
 }
 function renderPOSMenu(){
-  const q=$('search').value.trim().toLowerCase();let html='';
+  let html='';
   MENU_DATA.forEach((c,ci)=>{
     if(State.cat!=='Tất cả'&&State.cat!==c.category)return;
-    const items=c.items.map((it,ii)=>[it,ii]).filter(([it])=>!q||(it[0]+' '+it[2]).toLowerCase().includes(q));
+    const items=c.items.map((it,ii)=>[it,ii]);
     if(!items.length)return;
     html+=`<div><h3 class="font-extrabold text-moss">${c.category}</h3><p class="text-xs text-wood/50 mb-2">${c.sub}</p><div class="menu-grid gap-2">`+
     items.map(([it,ii])=>`<button onclick="addToCart(${ci},${ii})" class="item-card text-left bg-white rounded-xl border border-wood/10 p-3 shadow-sm transition flex flex-col justify-between min-h-[78px]"><span class="nm font-bold text-sm leading-tight">${fmtName(it[0])}</span><span class="text-moss font-extrabold mt-2">${money(it[1])}</span></button>`).join('')+`</div></div>`;
   });
-  $('pos-menu-grid').innerHTML=html||'<p class="text-center text-wood/40 py-10">Không tìm thấy món nào.</p>';
+  $('pos-menu-grid').innerHTML=html||'<p class="text-center text-wood/40 py-10">Chưa có món nào.</p>';
 }
 function addToCart(ci,ii){
   const it=MENU_DATA[ci].items[ii],cart=State.carts[State.activeTable],f=cart.find(x=>x.name===it[0]);
@@ -552,10 +548,30 @@ function renderVisualMenu(){
 }
 
 // ===== KHO =====
+function stockList(g){return [...STOCK_GROUPS[g],...(State.stockItems[g]||[])]}
 function renderStockInputs(){
-  $('stock-inputs-container').innerHTML=Object.entries(STOCK_GROUPS).map(([g,list])=>`<div><h3 class="font-extrabold text-moss text-sm mb-2">${g}</h3><div class="space-y-1.5">`+
-    list.map(n=>`<div class="flex items-center justify-between gap-3 bg-cream/50 rounded-xl px-3 py-2"><span class="font-semibold text-sm">${esc(n)}</span>
-    <input type="number" min="0" inputmode="decimal" data-stock="${esc(n)}" value="${State.stock[n]??''}" oninput="State.stock[this.dataset.stock]=this.value;save()" placeholder="0" class="w-24 md:w-32 text-right bg-white border border-wood/20 rounded-lg px-3 py-1.5 font-bold"></div>`).join('')+`</div></div>`).join('');
+  $('stock-inputs-container').innerHTML=Object.keys(STOCK_GROUPS).map((g,gi)=>{
+    const custom=new Set(State.stockItems[g]||[]);
+    return `<div><h3 class="font-extrabold text-moss text-sm mb-2">${esc(g)}</h3><div class="space-y-1.5">`+
+    stockList(g).map(n=>`<div class="flex items-center justify-between gap-2 bg-cream/50 rounded-xl px-3 py-2"><span class="font-semibold text-sm min-w-0 flex-1">${esc(n)}${custom.has(n)?' <span class="text-[10px] font-bold text-moss bg-moss/10 rounded-full px-1.5 py-0.5 align-middle">Mới</span>':''}</span>
+    <input type="number" min="0" inputmode="decimal" data-stock="${esc(n)}" value="${esc(State.stock[n]??'')}" oninput="State.stock[this.dataset.stock]=this.value;save()" placeholder="0" class="w-24 md:w-32 text-right bg-white border border-wood/20 rounded-lg px-3 py-1.5 font-bold">${custom.has(n)?`<button onclick="removeStockItem(${gi},this.dataset.n)" data-n="${esc(n)}" aria-label="Xóa ${esc(n)}" class="w-8 h-8 flex-shrink-0 rounded-lg text-red-700 active:scale-95"><i class="fa-solid fa-trash-can"></i></button>`:''}</div>`).join('')+
+    `<div class="flex items-center gap-2 pt-1"><input id="add-stock-${gi}" data-addstock="${gi}" maxlength="40" onkeydown="if(event.key==='Enter')addStockItem(${gi})" placeholder="Thêm nguyên liệu vào ${esc(g)}…" class="flex-1 min-w-0 bg-white border border-dashed border-moss/50 rounded-xl px-3 py-2 text-base font-medium"><button onclick="addStockItem(${gi})" class="flex-shrink-0 bg-moss text-cream px-3 py-2 rounded-xl font-bold text-sm active:scale-95 transition"><i class="fa-solid fa-plus mr-1"></i>Thêm</button></div></div></div>`}).join('');
+}
+function addStockItem(gi){
+  const g=Object.keys(STOCK_GROUPS)[gi],inp=$('add-stock-'+gi),n=inp.value.trim().replace(/\s+/g,' ');
+  if(!n)return showToast('Nhập tên nguyên liệu','error');
+  const all=Object.keys(STOCK_GROUPS).flatMap(stockList);
+  if(all.some(x=>x.toLowerCase()===n.toLowerCase()))return showToast('Nguyên liệu này đã có trong kho','error');
+  (State.stockItems[g]=State.stockItems[g]||[]).push(n);
+  save();renderStockInputs();showToast('Đã thêm '+n+' vào '+g);
+  const nx=$('add-stock-'+gi);if(nx)nx.focus();
+}
+function removeStockItem(gi,n){
+  const g=Object.keys(STOCK_GROUPS)[gi];
+  askConfirm(`Xóa "${n}" khỏi ${g}?`,()=>{
+    State.stockItems[g]=(State.stockItems[g]||[]).filter(x=>x!==n);if(!State.stockItems[g].length)delete State.stockItems[g];
+    delete State.stock[n];save();renderStockInputs();showToast('Đã xóa '+n);
+  },'Xóa');
 }
 function confirmShiftClose(){
   const filled=Object.entries(State.stock).filter(([,v])=>v!==''&&v!=null);
@@ -610,3 +626,4 @@ function confirmExportPDF(){
 </script>
 </body>
 </html>
+
