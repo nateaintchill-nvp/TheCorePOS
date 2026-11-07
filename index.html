@@ -107,6 +107,7 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
       <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-wood/40 text-sm"></i>
       <input id="vip-search" oninput="vipQuery=this.value;renderVip(true)" placeholder="Tìm tên khách…" autocomplete="off" class="w-full bg-white rounded-full pl-9 pr-4 py-2.5 text-base font-medium border border-wood/15">
     </div>
+    <button id="vip-debt-filter" onclick="vipOnlyDebt=!vipOnlyDebt;renderVip(true)" class="mb-3 px-3 py-1.5 rounded-full text-xs font-bold border border-wood/20 bg-white text-wood/70"><i class="fa-solid fa-hourglass-half mr-1"></i>Chỉ khách còn nợ</button>
     <div class="flex items-center gap-2 mb-4 text-sm"><span class="font-bold whitespace-nowrap text-wood/70">Tính tiền cho</span><select id="vip-table" onchange="selectTable(this.value);renderVip(true)" class="flex-1 min-w-0 bg-white border border-wood/20 rounded-xl px-3 py-2 text-base font-bold"></select></div>
     <div id="vip-list" class="space-y-3"></div>
   </div>
@@ -197,6 +198,7 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
 
 </main>
 
+
 <!-- Payment -->
 <div id="payment-modal" class="fixed inset-0 bg-wood/80 backdrop-blur-sm hidden z-50 justify-center items-center p-3">
   <div id="pay-card" class="bg-cream rounded-3xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden" style="max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)">
@@ -213,6 +215,13 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
             <div class="rounded-xl border-2 border-wood/20 py-3 text-center font-bold peer-checked:border-moss peer-checked:bg-moss/10"><i class="fa-solid fa-qrcode text-xl text-blue-700 block mb-1"></i>Mã QR</div></label>
           <label id="dep-opt" class="cursor-pointer hidden"><input type="radio" name="pay_method" value="Deposit" class="peer sr-only" onchange="toggleQR()">
             <div class="rounded-xl border-2 border-wood/20 py-3 text-center font-bold peer-checked:border-moss peer-checked:bg-moss/10"><i class="fa-solid fa-wallet text-xl text-amber-700 block mb-1"></i>Deposit</div></label>
+          <label id="debt-opt" class="cursor-pointer hidden"><input type="radio" name="pay_method" value="Trả sau" class="peer sr-only" onchange="toggleQR()">
+            <div class="rounded-xl border-2 border-wood/20 py-3 text-center font-bold peer-checked:border-moss peer-checked:bg-moss/10"><i class="fa-solid fa-hourglass-half text-xl text-red-700 block mb-1"></i>Trả sau</div></label>
+        </div>
+        <div id="debt-box" class="hidden mt-3 bg-white rounded-xl border border-red-300 p-3 text-sm font-semibold">
+          <label for="debt-due" class="block text-xs font-bold text-red-700 mb-1"><i class="fa-solid fa-calendar-day mr-1"></i>Hẹn trả trước ngày</label>
+          <input id="debt-due" type="date" class="w-full bg-cream border border-wood/20 rounded-xl px-3 py-2 text-base font-medium">
+          <p class="text-xs text-wood/60 font-medium mt-1.5">Hóa đơn được ghi nợ vào thẻ VIP của khách, thu sau trong tab VIP.</p>
         </div>
         <div id="dep-info" class="hidden mt-3 bg-white rounded-xl border border-moss/30 p-3 text-sm font-semibold"></div>
         <div id="disc-note-wrap" class="hidden mt-4">
@@ -315,17 +324,17 @@ elyaD+0J8O9EkcO9hpGk2pcfxGO4K5/SnftJeA/Enwt8eXniPwvqmqW/hrxKksEiQ3D7Ynf5pbZhnGx8
 <script>
 // ===== MENU (đơn vị: nghìn đồng) — [tên, giá, mô tả] =====
 const MENU_DATA = [
- {category:'Spirit-Forward', sub:'Đậm đà • Đậm rượu', items:[
+ {category:'Spirit-Forward', sub:'Đậm đà • Đậm chất • Hương vị nồng nàn', items:[
   ['God Father',140,'Scotch Whisky, Amaretto'],
   ['Negroni',160,'Gin, Campari, Sweet Vermouth'],
   ['Boulevardier',160,'Bourbon, Campari, Sweet Vermouth'],
   ['Long Island',180,'Vodka, Tequila, White Rum, Gin, Cointreau, Lemon Juice, Sugar, Coca-Cola']]},
- {category:'Citrus & Refreshing', sub:'Chua dịu • Tươi mát', items:[
+ {category:'Citrus & Refreshing', sub:'Chua dịu • Tươi mát • Dễ uống', items:[
   ['Salty Dog',120,'Vodka, Pink Grapefruit Juice, Salt Rim'],
   ['Whisky Sour',140,'Bourbon, Lime Juice, Sugar, Egg White, Angostura Bitters'],
   ['Margarita',140,'Tequila, Cointreau, Sugar, Lime Juice'],
   ['Side Car',140,'Brandy, Cointreau, Lemon Juice'],
-  ['White Lady',160,'Rum, Cointreau, Lemon Juice, Egg White'],
+  ['White Lady',160,'Light Rum, Cointreau, Lemon Juice, Egg White'],
   ["Devil's Age",160,'Gin, Cointreau, Campari, Lemon Juice'],
   ['Leap Year',160,'Gin, Cointreau, Sweet Vermouth, Lemon Juice'],
   ['Troya',180,'Scotch Whisky, Cointreau, Amaretto, Pink Grapefruit Liqueur, Lime Juice']]},
@@ -368,7 +377,7 @@ const STOCK_GROUPS = {
  'Bia & nước':["Coca-Cola","Sprite","Red Bull","Soda","Tonic","Tiger Crystal","Corona Extra"],
  'Nguyên liệu tươi':["Cam tươi","Dứa tươi","Chanh tươi","Bạc hà","Trứng gà","Cheese sợi","Snack"]
 };
-const TABLES=['Bàn 1','Bàn 2','Bàn 3','Bàn 4','Bàn 5','B1','B2','B3','Bartender','Staff','Nate'];
+const TABLES=['Bàn 1','Bàn 2','Bàn 3','Bàn 4','Bàn 5','B1','B2','B3'];
 const VAT=0.1; let KEY='',SESSION=null;
 // Dán URL Firebase Realtime Database vào đây để đồng bộ nhiều thiết bị, ví dụ: 'https://ten-du-an-default-rtdb.firebaseio.com'
 const CLOUD_DEFAULT='';let CLOUD_URL=CLOUD_DEFAULT;try{CLOUD_URL=localStorage.getItem('thecore_cloud_url')||CLOUD_DEFAULT}catch(e){}
@@ -648,7 +657,17 @@ async function changeAdminPass(){
 const vmoney=d=>Math.round(d).toLocaleString('vi-VN')+'đ';
 function parseVnd(s){s=String(s).trim().toLowerCase();const k=/k$/.test(s),d=s.replace(/[^\d]/g,'');return d?parseInt(d,10)*(k?1000:1):NaN}
 function vndPrev(inp,pid){const n=parseVnd(inp.value),el=$(pid);if(el)el.textContent=n>0?'= '+vmoney(n):''}
-function vipBal(id){return State.vipLog.reduce((a,l)=>l.vid===id?a+l.amt:a,0)}
+const isDebtEntry=l=>l.type==='debt'||l.type==='debtpay';
+function vipBal(id){return State.vipLog.reduce((a,l)=>l.vid===id&&!isDebtEntry(l)?a+l.amt:a,0)}
+const plusDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toLocaleDateString('en-CA')};
+function debtInfo(vid){
+  const debts=State.vipLog.filter(l=>l.vid===vid&&l.type==='debt').sort((a,b)=>(a.ts||0)-(b.ts||0));
+  let paid=State.vipLog.filter(l=>l.vid===vid&&l.type==='debtpay').reduce((a,l)=>a+l.amt,0);
+  const rows=debts.map(d=>{const take=Math.min(paid,d.amt);paid-=take;return{...d,rem:d.amt-take}}),td=today();
+  const open=rows.filter(r=>r.rem>0);
+  return{rows,total:open.reduce((a,r)=>a+r.rem,0),overdue:open.some(r=>r.due&&r.due<td)};
+}
+let vipOnlyDebt=false;
 function tableVipObj(t){const id=State.tableVip[t],v=id&&State.vips[id];return v&&!v.del?v:null}
 function depositPlan(){const v=tableVipObj(State.activeTable);if(!v)return null;const totalD=Math.round(totals(State.carts[State.activeTable]).t*1000),bal=vipBal(v.id),use=Math.max(0,Math.min(bal,totalD));return{v,bal,totalD,use,rest:totalD-use}}
 function detachVip(){delete State.tableVip[State.activeTable];save();updateCartUI()}
@@ -697,14 +716,15 @@ function billVip(id){
 function deleteVip(id){
   const v=State.vips[id];if(!v||v.del)return;const bal=vipBal(id);
   if(bal!==0)return showToast('Khách còn deposit '+vmoney(bal)+', hãy trừ hết hoặc hoàn trả trước khi xóa','error');
+  if(debtInfo(id).total>0)return showToast('Khách còn nợ '+vmoney(debtInfo(id).total)+', hãy thu nợ trước khi xóa','error');
   askConfirm(`Xóa khách "${v.name}" khỏi danh sách VIP?`,()=>{State.vips[id]={...v,del:true,ts:Date.now()};Object.keys(State.tableVip).forEach(t=>{if(State.tableVip[t]===id)delete State.tableVip[t]});if(vipOpen===id)vipOpen=null;save();updateCartUI();renderVip(true);showToast('Đã xóa khách')},'Xóa khách');
 }
 function vipCardHTML(v,bal,open){
-  const inp='bg-white border border-wood/20 rounded-xl px-3 py-2 text-base font-medium',t=State.activeTable,cart=State.carts[t];
-  let h=`<div class="bg-white rounded-2xl border border-wood/10 shadow-sm overflow-hidden"><button onclick="toggleVip('${v.id}')" class="w-full flex items-center gap-3 p-3 text-left"><span class="w-10 h-10 rounded-full bg-moss/10 text-moss flex items-center justify-center flex-shrink-0 font-extrabold">${esc(v.name.trim().charAt(0).toUpperCase())}</span><span class="min-w-0 flex-1"><span class="block font-extrabold truncate">${esc(v.name)}</span><span class="block text-xs text-wood/60">Giảm ${v.pct}% • Deposit <b class="text-moss">${vmoney(bal)}</b></span></span><i class="fa-solid fa-chevron-${open?'up':'down'} text-wood/40"></i></button>`;
+  const inp='bg-white border border-wood/20 rounded-xl px-3 py-2 text-base font-medium',t=State.activeTable,cart=State.carts[t],di=debtInfo(v.id);
+  let h=`<div class="bg-white rounded-2xl border border-wood/10 shadow-sm overflow-hidden"><button onclick="toggleVip('${v.id}')" class="w-full flex items-center gap-3 p-3 text-left"><span class="w-10 h-10 rounded-full bg-moss/10 text-moss flex items-center justify-center flex-shrink-0 font-extrabold">${esc(v.name.trim().charAt(0).toUpperCase())}</span><span class="min-w-0 flex-1"><span class="block font-extrabold truncate">${esc(v.name)}</span><span class="block text-xs text-wood/60">Giảm ${v.pct}% • Deposit <b class="text-moss">${vmoney(bal)}</b>${di.total>0?` • <b class="text-red-700">${di.overdue?'Quá hạn ':'Nợ '}${vmoney(di.total)}</b>`:''}</span></span><i class="fa-solid fa-chevron-${open?'up':'down'} text-wood/40"></i></button>`;
   if(!open)return h+'</div>';
   const sum=cart.reduce((a,x)=>a+x.price*x.qty,0),after=sum*(1-v.pct/100)*(1+VAT),n=cart.reduce((a,x)=>a+x.qty,0);
-  const logs=State.vipLog.filter(l=>l.vid===v.id).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,30);
+  const logs=State.vipLog.filter(l=>l.vid===v.id&&!isDebtEntry(l)).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,30);
   h+=`<div class="p-3 border-t border-wood/10 space-y-3">
     <div class="grid grid-cols-[1fr_4.5rem_auto] gap-2 items-end"><div class="min-w-0"><label class="block text-xs font-bold mb-1">Tên khách</label><input id="vp-name-${v.id}" value="${esc(v.name)}" maxlength="50" class="${inp} w-full"></div><div><label class="block text-xs font-bold mb-1">% giảm</label><input id="vp-pct-${v.id}" type="number" min="0" max="100" inputmode="numeric" value="${v.pct}" class="${inp} w-full"></div><button onclick="saveVipProfile('${v.id}')" class="bg-wood/10 px-3 py-2.5 rounded-xl font-bold text-sm active:scale-95">Lưu</button></div>
     <div class="bg-cream rounded-xl p-3"><p class="text-xs font-bold text-wood/60">Số dư deposit</p><p class="text-2xl font-extrabold text-moss">${vmoney(bal)}</p>
@@ -712,18 +732,50 @@ function vipCardHTML(v,bal,open){
       <input id="vd-note-${v.id}" maxlength="80" placeholder="Ghi chú (không bắt buộc)" class="${inp} w-full mt-1.5">
       <div class="grid grid-cols-2 gap-2 mt-2"><button onclick="vipMove('${v.id}',1)" class="bg-moss text-cream py-2.5 rounded-xl font-bold active:scale-95"><i class="fa-solid fa-plus mr-1"></i>Nạp tiền</button><button onclick="vipMove('${v.id}',-1)" class="bg-white border border-red-300 text-red-700 py-2.5 rounded-xl font-bold active:scale-95"><i class="fa-solid fa-minus mr-1"></i>Trừ tiền</button></div></div>
     <button onclick="billVip('${v.id}')" class="w-full bg-wood text-cream py-3 rounded-xl font-bold active:scale-95 transition"><i class="fa-solid fa-wallet mr-2"></i>Tính tiền ${esc(t)}${n?` • ${n} món • ${money(after)}`:' (đang trống)'}</button>
+    <details class="text-sm bg-cream rounded-xl p-3"${di.total>0?' open':''}><summary class="font-bold cursor-pointer ${di.total>0?'text-red-700':''}"><i class="fa-solid fa-hourglass-half mr-1.5"></i>Trả sau${di.total>0?' • đang nợ '+vmoney(di.total):''}</summary><div class="mt-3 space-y-3">
+      ${di.rows.filter(r=>r.rem>0).map(r=>{const late=r.due&&r.due<today(),days=late?Math.round((new Date(today())-new Date(r.due))/864e5):0;return `<div class="flex justify-between gap-2 text-xs bg-white rounded-lg px-2.5 py-2 border ${late?'border-red-300':'border-wood/10'}"><span class="min-w-0"><b>${esc(r.note||'Ghi nợ')}</b><br><span class="text-wood/50">${fmtDate(r.date)} • hẹn trả ${r.due?fmtDate(r.due):'—'}</span>${late?`<br><b class="text-red-700">Quá hạn ${days} ngày</b>`:''}</span><b class="flex-shrink-0 text-red-700">${vmoney(r.rem)}</b></div>`}).join('')||'<p class="text-xs text-wood/40">Khách không còn nợ.</p>'}
+      ${di.total>0?`<div class="bg-white rounded-xl border border-wood/10 p-2.5 space-y-1.5"><p class="text-xs font-bold">Thu nợ (trừ vào khoản cũ nhất trước)</p>
+        <input id="dc-amt-${v.id}" inputmode="numeric" autocomplete="off" oninput="vndPrev(this,'dc-prev-${v.id}')" placeholder="Số tiền (bỏ trống = trả hết ${vmoney(di.total)})" class="${inp} w-full"><p id="dc-prev-${v.id}" class="text-xs font-semibold text-moss h-4"></p>
+        <div class="grid grid-cols-2 gap-2"><button onclick="debtPay('${v.id}','Tiền mặt/CK')" class="bg-moss text-cream py-2.5 rounded-xl font-bold text-sm active:scale-95">Thu tiền mặt/CK</button><button onclick="debtPay('${v.id}','Deposit')" class="bg-white border border-moss text-moss py-2.5 rounded-xl font-bold text-sm active:scale-95">Trừ deposit</button></div></div>`:''}
+      <div class="bg-white rounded-xl border border-wood/10 p-2.5 space-y-1.5"><p class="text-xs font-bold">Ghi nợ thủ công (khách quên thanh toán)</p>
+        <input id="db-amt-${v.id}" inputmode="numeric" autocomplete="off" oninput="vndPrev(this,'db-prev-${v.id}')" placeholder="Số tiền (VD: 350000 hoặc 350k)" class="${inp} w-full"><p id="db-prev-${v.id}" class="text-xs font-semibold text-red-700 h-4"></p>
+        <input id="db-note-${v.id}" maxlength="80" placeholder="Ghi chú (VD: quên trả tối 5/11)" class="${inp} w-full">
+        <label class="block text-xs font-bold pt-1">Hẹn trả trước ngày</label><input id="db-due-${v.id}" type="date" value="${plusDays(7)}" class="${inp} w-full">
+        <button onclick="debtAdd('${v.id}')" class="w-full bg-white border border-red-300 text-red-700 py-2.5 rounded-xl font-bold text-sm active:scale-95"><i class="fa-solid fa-plus mr-1"></i>Ghi nợ</button></div>
+      ${(()=>{const dl=State.vipLog.filter(l=>l.vid===v.id&&isDebtEntry(l)).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,30);return dl.length?`<details><summary class="text-xs font-bold cursor-pointer">Lịch sử nợ (${dl.length})</summary><div class="mt-1.5 space-y-1">${dl.map(l=>`<div class="flex justify-between gap-2 text-xs bg-white rounded-lg px-2.5 py-1.5"><span class="min-w-0"><span class="text-wood/50">${fmtDate(l.date)} ${esc(l.time||'')}</span> ${esc(l.note||'')}</span><b class="flex-shrink-0 ${l.type==='debt'?'text-red-700':'text-moss'}">${l.type==='debt'?'+':'−'}${vmoney(l.amt)}</b></div>`).join('')}</div></details>`:''})()}
+    </div></details>
     <details class="text-sm"><summary class="font-bold cursor-pointer">Lịch sử deposit (${logs.length})</summary><div class="mt-2 space-y-1">${logs.length?logs.map(l=>`<div class="flex justify-between gap-2 text-xs bg-cream/60 rounded-lg px-2.5 py-1.5"><span class="min-w-0"><span class="text-wood/50">${fmtDate(l.date)} ${esc(l.time||'')}</span> ${esc(l.note||(l.amt>0?'Nạp tiền':'Trừ tiền'))}</span><b class="flex-shrink-0 ${l.amt>0?'text-moss':'text-red-700'}">${l.amt>0?'+':'−'}${vmoney(Math.abs(l.amt))}</b></div>`).join(''):'<p class="text-xs text-wood/40">Chưa có giao dịch</p>'}</div></details>
     <button onclick="deleteVip('${v.id}')" class="text-xs font-bold text-red-700 underline">Xóa khách này</button></div></div>`;
   return h;
+}
+function debtPay(id,method){
+  const v=State.vips[id];if(!v||v.del)return;const di=debtInfo(id);if(di.total<=0)return showToast('Khách không còn nợ','error');
+  const raw=$('dc-amt-'+id).value.trim(),amt=raw?parseVnd(raw):di.total;
+  if(!(amt>0))return showToast('Nhập số tiền hợp lệ','error');
+  if(amt>di.total)return showToast('Số tiền lớn hơn khoản nợ ('+vmoney(di.total)+')','error');
+  if(method==='Deposit'){const bal=vipBal(id);if(amt>bal)return showToast('Deposit không đủ (còn '+vmoney(bal)+')','error')}
+  const e=logEntry(id,amt,'debtpay',method==='Deposit'?'Trả nợ từ deposit':'Thu nợ '+method);e.method=method;State.vipLog.push(e);
+  if(method==='Deposit')State.vipLog.push(logEntry(id,-amt,'spend','Trả nợ'));
+  save();renderVip(true);showToast('Đã thu nợ '+vmoney(amt));
+}
+function debtAdd(id){
+  const v=State.vips[id];if(!v||v.del)return;const amt=parseVnd($('db-amt-'+id).value),due=$('db-due-'+id).value,note=$('db-note-'+id).value.trim();
+  if(!(amt>0))return showToast('Nhập số tiền nợ','error');
+  if(amt>200000000)return showToast('Số tiền quá lớn, kiểm tra lại','error');
+  if(!due)return showToast('Chọn ngày hẹn trả','error');
+  const e=logEntry(id,amt,'debt',note||'Ghi nợ');e.due=due;State.vipLog.push(e);
+  save();renderVip(true);showToast('Đã ghi nợ '+vmoney(amt));
 }
 function renderVip(force){
   const list=$('vip-list');if(!list)return;
   const a=document.activeElement;if(!force&&a&&list.contains(a)&&['INPUT','TEXTAREA'].includes(a.tagName))return;
   const sel=$('vip-table');if(sel&&document.activeElement!==sel)sel.innerHTML=TABLES.map(t=>{const n=State.carts[t].reduce((x,i)=>x+i.qty,0);return `<option value="${t}"${t===State.activeTable?' selected':''}>${t}${n?' • '+n+' món':' • trống'}</option>`}).join('');
-  const all=Object.values(State.vips).filter(v=>!v.del),bals={};State.vipLog.forEach(l=>bals[l.vid]=(bals[l.vid]||0)+l.amt);
-  $('vip-summary').innerText=all.length?`${all.length} khách • Đang giữ deposit: ${vmoney(all.reduce((x,v)=>x+(bals[v.id]||0),0))}`:'Chưa có khách VIP. Bấm Thêm khách để tạo.';
-  const q=nameKey(vipQuery),rows=all.filter(v=>!q||nameKey(v.name).includes(q)).sort((x,y)=>x.name.localeCompare(y.name,'vi'));
-  list.innerHTML=rows.length?rows.map(v=>vipCardHTML(v,bals[v.id]||0,vipOpen===v.id)).join(''):(all.length?'<p class="text-center text-wood/40 py-8">Không tìm thấy khách nào.</p>':'');
+  const all=Object.values(State.vips).filter(v=>!v.del),bals={};State.vipLog.forEach(l=>{if(!isDebtEntry(l))bals[l.vid]=(bals[l.vid]||0)+l.amt});
+  const debtors=all.filter(v=>debtInfo(v.id).total>0),dsum=debtors.reduce((x,v)=>x+debtInfo(v.id).total,0);
+  $('vip-summary').innerText=all.length?`${all.length} khách • Đang giữ deposit: ${vmoney(all.reduce((x,v)=>x+(bals[v.id]||0),0))}`+(debtors.length?` • ${debtors.length} khách còn nợ: ${vmoney(dsum)}`:''):'Chưa có khách VIP. Bấm Thêm khách để tạo.';
+  const df=$('vip-debt-filter');if(df){df.classList.toggle('bg-red-700',vipOnlyDebt);df.classList.toggle('text-cream',vipOnlyDebt);df.classList.toggle('bg-white',!vipOnlyDebt);df.classList.toggle('text-wood/70',!vipOnlyDebt)}
+  const q=nameKey(vipQuery),rows=all.filter(v=>(!q||nameKey(v.name).includes(q))&&(!vipOnlyDebt||debtInfo(v.id).total>0)).sort((x,y)=>x.name.localeCompare(y.name,'vi'));
+  list.innerHTML=rows.length?rows.map(v=>vipCardHTML(v,bals[v.id]||0,vipOpen===v.id)).join(''):(all.length?'<p class="text-center text-wood/40 py-8">'+(vipOnlyDebt&&!q?'Không có khách nào đang nợ.':'Không tìm thấy khách nào.')+'</p>':'');
 }
 
 // ===== INIT =====
@@ -817,7 +869,7 @@ function openPaymentModal(){
   if(!cart.length)return showToast('Đơn đang trống, thêm món trước nhé','error');
   $('modal-table').innerText=State.activeTable;$('modal-pay-amount').innerText=money(totals(cart).t);
   document.querySelector('input[name=pay_method][value="Tiền mặt"]').checked=true;toggleQR();
-  const vp=tableVipObj(State.activeTable);$('dep-opt').classList.toggle('hidden',!vp);$('method-grid').classList.toggle('grid-cols-3',!!vp);$('method-grid').classList.toggle('grid-cols-2',!vp);$('pay-vip').classList.toggle('hidden',!vp);if(vp)$('pay-vip').innerHTML=`<i class="fa-solid fa-crown mr-1"></i>Khách VIP: <b>${esc(vp.name)}</b> • Deposit còn <b>${vmoney(vipBal(vp.id))}</b>`;
+  const vp=tableVipObj(State.activeTable);$('dep-opt').classList.toggle('hidden',!vp);$('debt-opt').classList.toggle('hidden',!vp);$('debt-due').min=today();$('debt-due').value=plusDays(7);$('pay-vip').classList.toggle('hidden',!vp);if(vp)$('pay-vip').innerHTML=`<i class="fa-solid fa-crown mr-1"></i>Khách VIP: <b>${esc(vp.name)}</b> • Deposit còn <b>${vmoney(vipBal(vp.id))}</b>${debtInfo(vp.id).total>0?`<br><b class="text-red-700">${debtInfo(vp.id).overdue?'Quá hạn: ':'Đang nợ: '}${vmoney(debtInfo(vp.id).total)}</b>`:''}`;
   const dp=totals(cart).p;$('disc-note').value=vp?('Khách VIP: '+vp.name):'';$('disc-note-pct').innerText=dp?'('+(dp===100?'On the house':'Giảm '+dp+'%')+')':'';$('disc-note-wrap').classList.toggle('hidden',!dp);
   $('payment-modal').classList.replace('hidden','flex');
 }
@@ -827,6 +879,7 @@ function toggleQR(){
   const m=document.querySelector('input[name=pay_method]:checked').value,qr=!free&&m==='Mã QR';
   $('qr-container').classList.toggle('hidden',!qr);$('qr-container').classList.toggle('flex',qr);
   $('pay-card').classList.toggle('md:max-w-3xl',qr);$('pay-body').classList.toggle('md:grid-cols-2',qr);
+  $('debt-box').classList.toggle('hidden',free||m!=='Trả sau');
   const pl=depositPlan(),dep=!free&&m==='Deposit'&&pl;$('dep-info').classList.toggle('hidden',!dep);
   if(dep)$('dep-info').innerHTML=pl.bal<=0?'<span class="text-red-700">Khách chưa có deposit để trừ.</span>':`Số dư: ${vmoney(pl.bal)}<br>Trừ deposit: <b class="text-moss">${vmoney(pl.use)}</b><br>`+(pl.rest>0?`<span class="text-red-700">Còn thiếu ${vmoney(pl.rest)}, thu thêm bằng tiền mặt.</span>`:`Số dư còn lại: ${vmoney(pl.bal-pl.use)}`);
 }
@@ -834,9 +887,12 @@ function confirmPayment(){
   const cart=State.carts[State.activeTable],t=totals(cart),now=new Date(),v=tableVipObj(State.activeTable);
   let method=t.t===0?'On the house':document.querySelector('input[name=pay_method]:checked').value,dep=0;
   if(t.t>0&&method==='Deposit'){const pl=depositPlan();if(!pl||pl.use<=0)return showToast('Khách chưa có deposit để trừ','error');dep=pl.use;if(pl.rest>0)method='Deposit + Tiền mặt'}
+  let debt=0,due='';
+  if(t.t>0&&method==='Trả sau'){if(!v)return showToast('Chọn khách VIP để ghi nợ','error');due=$('debt-due').value;if(!due||due<today())return showToast('Chọn ngày hẹn trả (từ hôm nay trở đi)','error');debt=Math.round(t.t*1000)}
   const oid=Date.now(),tm=now.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
   State.history.unshift({id:oid,type:'order',date:today(),time:tm,
-    table:State.activeTable,items:cart.map(x=>({...x})),subtotal:t.s,discount:t.d,discPct:t.p,discNote:t.p?$('disc-note').value.trim():'',vat:t.v,total:t.t,method,vipId:v?v.id:undefined,vipName:v?v.name:undefined,deposit:dep||undefined});
+    table:State.activeTable,items:cart.map(x=>({...x})),subtotal:t.s,discount:t.d,discPct:t.p,discNote:t.p?$('disc-note').value.trim():'',vat:t.v,total:t.t,method,vipId:v?v.id:undefined,vipName:v?v.name:undefined,deposit:dep||undefined,debt:debt||undefined,dueDate:due||undefined});
+  if(debt){const e=logEntry(v.id,debt,'debt','Hóa đơn '+State.activeTable,oid);e.due=due;e.ts=oid;State.vipLog.push(e)}
   if(dep)State.vipLog.push({id:'l'+oid+Math.random().toString(36).slice(2,5),vid:v.id,amt:-dep,type:'spend',note:'Hóa đơn '+State.activeTable,ts:oid,date:today(),time:tm,oid});
   State.carts[State.activeTable]=[];delete State.discounts[State.activeTable];delete State.tableVip[State.activeTable];save();closePaymentModal();toggleCart(false);renderTableSelector();updateCartUI();if(curTab==='vip')renderVip(true);showToast('Đã thanh toán '+money(t.t));
 }
@@ -896,7 +952,7 @@ function renderHistoryTab(){
     day.map(h=>h.type==='order'?`<details class="bg-white rounded-xl border border-wood/10 shadow-sm"><summary class="flex justify-between items-center p-3 cursor-pointer list-none">
       <span class="whitespace-nowrap"><span class="font-bold">${esc(h.table)}</span> <span class="text-xs text-wood/50 ml-1">${h.time} • ${h.method}</span></span><span class="font-extrabold text-moss">${money(h.total)}</span></summary>
       <div class="px-3 pb-3 text-sm space-y-1 border-t border-wood/10 pt-2">${h.items.map(x=>`<div class="flex justify-between"><span>${x.qty} × ${esc(x.name)}</span><span>${money(x.price*x.qty)}</span></div>`).join('')}
-      ${h.discount?`<div class="flex justify-between text-red-700 text-xs pt-1"><span>${h.discPct===100?'On the house':'Giảm '+h.discPct+'%'}</span><span>−${money(h.discount)}</span></div>${h.discNote?`<div class="text-xs text-red-700/80 italic">Lý do: ${esc(h.discNote)}</div>`:''}`:''}${h.vipName?`<div class="text-xs text-moss font-bold pt-1"><i class="fa-solid fa-crown mr-1"></i>Khách VIP: ${esc(h.vipName)}</div>`:''}${h.deposit?`<div class="flex justify-between text-xs text-moss"><span>Trừ deposit</span><span>−${vmoney(h.deposit)}</span></div>`:''}<div class="flex justify-between text-wood/60 text-xs pt-1"><span>VAT 10%</span><span>${money(h.vat)}</span></div></div></details>`
+      ${h.discount?`<div class="flex justify-between text-red-700 text-xs pt-1"><span>${h.discPct===100?'On the house':'Giảm '+h.discPct+'%'}</span><span>−${money(h.discount)}</span></div>${h.discNote?`<div class="text-xs text-red-700/80 italic">Lý do: ${esc(h.discNote)}</div>`:''}`:''}${h.vipName?`<div class="text-xs text-moss font-bold pt-1"><i class="fa-solid fa-crown mr-1"></i>Khách VIP: ${esc(h.vipName)}</div>`:''}${h.deposit?`<div class="flex justify-between text-xs text-moss"><span>Trừ deposit</span><span>−${vmoney(h.deposit)}</span></div>`:''}${h.debt?`<div class="flex justify-between text-xs text-red-700 font-bold"><span>Ghi nợ (hẹn trả ${h.dueDate?fmtDate(h.dueDate):'—'})</span><span>${vmoney(h.debt)}</span></div>`:''}<div class="flex justify-between text-wood/60 text-xs pt-1"><span>VAT 10%</span><span>${money(h.vat)}</span></div></div></details>`
     :`<details class="bg-wood/5 rounded-xl border border-wood/15"><summary class="p-3 cursor-pointer list-none font-bold"><i class="fa-solid fa-lock mr-2 text-moss"></i>Chốt ca <span class="text-xs text-wood/50 ml-1 whitespace-nowrap">${h.time} • ${Object.keys(h.stock).length} mục kho</span></summary>
       <div class="px-3 pb-3 text-sm grid grid-cols-2 gap-x-4 gap-y-1 border-t border-wood/10 pt-2">${Object.entries(h.stock).map(([k,v])=>`<div class="flex justify-between"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div></details>`).join('')+`</div></div>`;
   }).join('');
