@@ -152,9 +152,10 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
         <button onclick="clearHistory()" class="px-3 py-2 rounded-full bg-white border border-red-300 text-red-700 font-bold text-sm active:scale-95 transition" aria-label="Xóa lịch sử"><i class="fa-solid fa-trash"></i></button>
       </div>
     </div>
+    <div class="mb-3"><button id="hist-vip-btn" onclick="histVipOnly=!histVipOnly;renderHistoryTab()" class="px-3 py-1.5 rounded-full text-xs font-bold border border-wood/20 bg-white text-wood/70"><i class="fa-solid fa-crown mr-1"></i>Chỉ giao dịch khách VIP (deposit, nợ)</button></div>
     <div class="space-y-3" id="history-list"></div>
     <div id="history-empty" class="py-16 text-center text-wood/40 font-medium bg-white rounded-2xl border-2 border-dashed border-wood/20">
-      <i class="fa-solid fa-folder-open text-5xl mb-3 text-wood/20"></i><p>Chưa có giao dịch hoặc kiểm kê nào.</p>
+      <i class="fa-solid fa-folder-open text-5xl mb-3 text-wood/20"></i><p>Chưa có giao dịch, kiểm kê hoặc ghi chú khách VIP nào.</p>
     </div>
   </div>
 </section>
@@ -197,7 +198,6 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
 </section>
 
 </main>
-
 
 <!-- Payment -->
 <div id="payment-modal" class="fixed inset-0 bg-wood/80 backdrop-blur-sm hidden z-50 justify-center items-center p-3">
@@ -298,6 +298,20 @@ elyaD+0J8O9EkcO9hpGk2pcfxGO4K5/SnftJeA/Enwt8eXniPwvqmqW/hrxKksEiQ3D7Ynf5pbZhnGx8
   </div>
 </div>
 
+<!-- Chủ quán xác nhận -->
+<div id="auth-modal" class="fixed inset-0 bg-wood/80 backdrop-blur-sm hidden z-[65] justify-center items-center p-3">
+  <div class="bg-cream rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
+    <div class="bg-moss px-4 py-3 text-center"><h3 class="text-lg font-extrabold text-cream"><i class="fa-solid fa-user-shield mr-2"></i>Chủ quán đăng nhập</h3></div>
+    <div class="p-5 space-y-3">
+      <p id="auth-desc" class="text-sm font-bold text-center"></p>
+      <p class="text-xs text-wood/60 text-center -mt-1">Thao tác này chỉ chủ quán được thực hiện. Đăng nhập để tiếp tục.</p>
+      <input id="auth-user" autocomplete="username" autocapitalize="off" class="w-full bg-white border border-wood/20 rounded-xl px-3 py-2.5 text-base font-medium" placeholder="Tên đăng nhập">
+      <input id="auth-pass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitAuth()" class="w-full bg-white border border-wood/20 rounded-xl px-3 py-2.5 text-base font-medium" placeholder="Mật khẩu">
+    </div>
+    <div class="flex gap-3 p-4 border-t border-wood/15"><button onclick="closeAuthModal()" class="flex-1 py-3 rounded-xl font-bold bg-wood/10">Hủy</button><button id="auth-ok" onclick="submitAuth()" class="flex-1 py-3 rounded-xl font-bold text-cream bg-moss">Xác nhận</button></div>
+  </div>
+</div>
+
 <!-- Export -->
 <div id="export-modal" class="fixed inset-0 bg-wood/80 backdrop-blur-sm hidden z-50 justify-center items-center p-3">
   <div class="bg-cream rounded-3xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden" style="max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)">
@@ -330,11 +344,11 @@ const MENU_DATA = [
   ['Boulevardier',160,'Bourbon, Campari, Sweet Vermouth'],
   ['Long Island',180,'Vodka, Tequila, White Rum, Gin, Cointreau, Lemon Juice, Sugar, Coca-Cola']]},
  {category:'Citrus & Refreshing', sub:'Chua dịu • Tươi mát • Dễ uống', items:[
-  ['Salty Dog',120,'Vodka, Pink Grapefruit Juice, Salt Rim'],
+  ['Salty Dog',120,'Gin, Pink Grapefruit Juice, Salt Rim'],
   ['Whisky Sour',140,'Bourbon, Lime Juice, Sugar, Egg White, Angostura Bitters'],
   ['Margarita',140,'Tequila, Cointreau, Sugar, Lime Juice'],
   ['Side Car',140,'Brandy, Cointreau, Lemon Juice'],
-  ['White Lady',160,'Light Rum, Cointreau, Lemon Juice, Egg White'],
+  ['White Lady',160,'Gin, Cointreau, Lemon Juice, Egg White'],
   ["Devil's Age",160,'Gin, Cointreau, Campari, Lemon Juice'],
   ['Leap Year',160,'Gin, Cointreau, Sweet Vermouth, Lemon Juice'],
   ['Troya',180,'Scotch Whisky, Cointreau, Amaretto, Pink Grapefruit Liqueur, Lime Juice']]},
@@ -377,7 +391,7 @@ const STOCK_GROUPS = {
  'Bia & nước':["Coca-Cola","Sprite","Red Bull","Soda","Tonic","Tiger Crystal","Corona Extra"],
  'Nguyên liệu tươi':["Cam tươi","Dứa tươi","Chanh tươi","Bạc hà","Trứng gà","Cheese sợi","Snack"]
 };
-const TABLES=['Bàn 1','Bàn 2','Bàn 3','Bàn 4','Bàn 5','B1','B2','B3','Bartender','Staff','Nate'];
+const TABLES=['Bàn 1','Bàn 2','Bàn 3','Bàn 4','Bàn 5','B1','B2','B3'];
 const VAT=0.1; let KEY='',SESSION=null;
 // Dán URL Firebase Realtime Database vào đây để đồng bộ nhiều thiết bị, ví dụ: 'https://ten-du-an-default-rtdb.firebaseio.com'
 const CLOUD_DEFAULT='';let CLOUD_URL=CLOUD_DEFAULT;try{CLOUD_URL=localStorage.getItem('thecore_cloud_url')||CLOUD_DEFAULT}catch(e){}
@@ -643,6 +657,23 @@ async function loginAdmin(){
   if(u.toLowerCase()===a.user.toLowerCase()&&adminHash(u,p,a.salt)===a.hash){loginFails=0;setAdminSession(true);renderAdminUI();showToast('Đã đăng nhập chủ quán')}
   else{if(++loginFails>=5){loginLockUntil=Date.now()+30000;loginFails=0}renderAdminCard();showToast('Sai tên đăng nhập hoặc mật khẩu','error')}
 }
+let authAction=null;
+function requireAdmin(desc,fn){
+  if(isAdmin())return fn();
+  if(!State.admin)return showToast('Chưa có tài khoản chủ quán. Hãy tạo trong Cài đặt trước.','error');
+  authAction=fn;$('auth-desc').innerText=desc;$('auth-user').value='';$('auth-pass').value='';
+  $('auth-ok').disabled=false;$('auth-ok').innerText='Xác nhận';
+  $('auth-modal').classList.replace('hidden','flex');setTimeout(()=>$('auth-user').focus(),50);
+}
+function closeAuthModal(){authAction=null;$('auth-modal').classList.replace('flex','hidden')}
+async function submitAuth(){
+  const a=State.admin,fn=authAction;if(!a||!fn)return closeAuthModal();
+  if(Date.now()<loginLockUntil)return showToast('Sai nhiều lần, thử lại sau '+Math.ceil((loginLockUntil-Date.now())/1000)+' giây','error');
+  const u=$('auth-user').value.trim(),pw=$('auth-pass').value;if(!u||!pw)return showToast('Nhập tên đăng nhập và mật khẩu','error');
+  const btn=$('auth-ok');btn.disabled=true;btn.innerText='Đang kiểm tra…';await tick();
+  if(u.toLowerCase()===a.user.toLowerCase()&&adminHash(u,pw,a.salt)===a.hash){loginFails=0;closeAuthModal();fn()}
+  else{if(++loginFails>=5){loginLockUntil=Date.now()+30000;loginFails=0}btn.disabled=false;btn.innerText='Xác nhận';$('auth-pass').value='';showToast('Sai tên đăng nhập hoặc mật khẩu','error')}
+}
 function logoutAdmin(){setAdminSession(false);renderAdminUI();showToast('Đã đăng xuất')}
 async function changeAdminPass(){
   const a=State.admin;if(!a||!isAdmin())return;
@@ -662,8 +693,10 @@ function vipBal(id){return State.vipLog.reduce((a,l)=>l.vid===id&&!isDebtEntry(l
 const plusDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toLocaleDateString('en-CA')};
 function debtInfo(vid){
   const debts=State.vipLog.filter(l=>l.vid===vid&&l.type==='debt').sort((a,b)=>(a.ts||0)-(b.ts||0));
-  let paid=State.vipLog.filter(l=>l.vid===vid&&l.type==='debtpay').reduce((a,l)=>a+l.amt,0);
-  const rows=debts.map(d=>{const take=Math.min(paid,d.amt);paid-=take;return{...d,rem:d.amt-take}}),td=today();
+  const pays=State.vipLog.filter(l=>l.vid===vid&&l.type==='debtpay'),direct={};
+  pays.filter(l=>l.ref).forEach(l=>direct[l.ref]=(direct[l.ref]||0)+l.amt);
+  let paid=pays.filter(l=>!l.ref).reduce((a,l)=>a+l.amt,0);
+  const rows=debts.map(d=>{const dir=Math.min(direct[d.id]||0,d.amt),take=Math.min(paid,d.amt-dir);paid-=take;return{...d,rem:d.amt-dir-take}}),td=today();
   const open=rows.filter(r=>r.rem>0);
   return{rows,total:open.reduce((a,r)=>a+r.rem,0),overdue:open.some(r=>r.due&&r.due<td)};
 }
@@ -717,7 +750,7 @@ function deleteVip(id){
   const v=State.vips[id];if(!v||v.del)return;const bal=vipBal(id);
   if(bal!==0)return showToast('Khách còn deposit '+vmoney(bal)+', hãy trừ hết hoặc hoàn trả trước khi xóa','error');
   if(debtInfo(id).total>0)return showToast('Khách còn nợ '+vmoney(debtInfo(id).total)+', hãy thu nợ trước khi xóa','error');
-  askConfirm(`Xóa khách "${v.name}" khỏi danh sách VIP?`,()=>{State.vips[id]={...v,del:true,ts:Date.now()};Object.keys(State.tableVip).forEach(t=>{if(State.tableVip[t]===id)delete State.tableVip[t]});if(vipOpen===id)vipOpen=null;save();updateCartUI();renderVip(true);showToast('Đã xóa khách')},'Xóa khách');
+  requireAdmin(`Xóa khách VIP "${v.name}"`,()=>askConfirm(`Xóa khách "${v.name}" khỏi danh sách VIP?`,()=>{State.vips[id]={...v,del:true,ts:Date.now()};Object.keys(State.tableVip).forEach(t=>{if(State.tableVip[t]===id)delete State.tableVip[t]});if(vipOpen===id)vipOpen=null;save();updateCartUI();renderVip(true);showToast('Đã xóa khách')},'Xóa khách'));
 }
 function vipCardHTML(v,bal,open){
   const inp='bg-white border border-wood/20 rounded-xl px-3 py-2 text-base font-medium',t=State.activeTable,cart=State.carts[t],di=debtInfo(v.id);
@@ -733,7 +766,7 @@ function vipCardHTML(v,bal,open){
       <div class="grid grid-cols-2 gap-2 mt-2"><button onclick="vipMove('${v.id}',1)" class="bg-moss text-cream py-2.5 rounded-xl font-bold active:scale-95"><i class="fa-solid fa-plus mr-1"></i>Nạp tiền</button><button onclick="vipMove('${v.id}',-1)" class="bg-white border border-red-300 text-red-700 py-2.5 rounded-xl font-bold active:scale-95"><i class="fa-solid fa-minus mr-1"></i>Trừ tiền</button></div></div>
     <button onclick="billVip('${v.id}')" class="w-full bg-wood text-cream py-3 rounded-xl font-bold active:scale-95 transition"><i class="fa-solid fa-wallet mr-2"></i>Tính tiền ${esc(t)}${n?` • ${n} món • ${money(after)}`:' (đang trống)'}</button>
     <details class="text-sm bg-cream rounded-xl p-3"${di.total>0?' open':''}><summary class="font-bold cursor-pointer ${di.total>0?'text-red-700':''}"><i class="fa-solid fa-hourglass-half mr-1.5"></i>Trả sau${di.total>0?' • đang nợ '+vmoney(di.total):''}</summary><div class="mt-3 space-y-3">
-      ${di.rows.filter(r=>r.rem>0).map(r=>{const late=r.due&&r.due<today(),days=late?Math.round((new Date(today())-new Date(r.due))/864e5):0;return `<div class="flex justify-between gap-2 text-xs bg-white rounded-lg px-2.5 py-2 border ${late?'border-red-300':'border-wood/10'}"><span class="min-w-0"><b>${esc(r.note||'Ghi nợ')}</b><br><span class="text-wood/50">${fmtDate(r.date)} • hẹn trả ${r.due?fmtDate(r.due):'—'}</span>${late?`<br><b class="text-red-700">Quá hạn ${days} ngày</b>`:''}</span><b class="flex-shrink-0 text-red-700">${vmoney(r.rem)}</b></div>`}).join('')||'<p class="text-xs text-wood/40">Khách không còn nợ.</p>'}
+      ${di.rows.filter(r=>r.rem>0).map(r=>{const late=r.due&&r.due<today(),days=late?Math.round((new Date(today())-new Date(r.due))/864e5):0;return `<div class="flex justify-between gap-2 text-xs bg-white rounded-lg px-2.5 py-2 border ${late?'border-red-300':'border-wood/10'}"><span class="min-w-0"><b>${esc(r.note||'Ghi nợ')}</b><br><span class="text-wood/50">${fmtDate(r.date)} • hẹn trả ${r.due?fmtDate(r.due):'—'}</span>${late?`<br><b class="text-red-700">Quá hạn ${days} ngày</b>`:''}</span><span class="flex-shrink-0 flex items-start gap-1.5"><b class="text-red-700">${vmoney(r.rem)}</b><button onclick="debtWriteOff('${r.id}','${v.id}')" aria-label="Xóa khoản nợ" class="w-7 h-7 -mt-1 rounded-lg bg-red-50 text-red-700 active:scale-95"><i class="fa-solid fa-trash-can text-xs"></i></button></span></div>`}).join('')||'<p class="text-xs text-wood/40">Khách không còn nợ.</p>'}
       ${di.total>0?`<div class="bg-white rounded-xl border border-wood/10 p-2.5 space-y-1.5"><p class="text-xs font-bold">Thu nợ (trừ vào khoản cũ nhất trước)</p>
         <input id="dc-amt-${v.id}" inputmode="numeric" autocomplete="off" oninput="vndPrev(this,'dc-prev-${v.id}')" placeholder="Số tiền (bỏ trống = trả hết ${vmoney(di.total)})" class="${inp} w-full"><p id="dc-prev-${v.id}" class="text-xs font-semibold text-moss h-4"></p>
         <div class="grid grid-cols-2 gap-2"><button onclick="debtPay('${v.id}','Tiền mặt/CK')" class="bg-moss text-cream py-2.5 rounded-xl font-bold text-sm active:scale-95">Thu tiền mặt/CK</button><button onclick="debtPay('${v.id}','Deposit')" class="bg-white border border-moss text-moss py-2.5 rounded-xl font-bold text-sm active:scale-95">Trừ deposit</button></div></div>`:''}
@@ -755,8 +788,19 @@ function debtPay(id,method){
   if(amt>di.total)return showToast('Số tiền lớn hơn khoản nợ ('+vmoney(di.total)+')','error');
   if(method==='Deposit'){const bal=vipBal(id);if(amt>bal)return showToast('Deposit không đủ (còn '+vmoney(bal)+')','error')}
   const e=logEntry(id,amt,'debtpay',method==='Deposit'?'Trả nợ từ deposit':'Thu nợ '+method);e.method=method;State.vipLog.push(e);
-  if(method==='Deposit')State.vipLog.push(logEntry(id,-amt,'spend','Trả nợ'));
+  if(method==='Deposit'){const sp=logEntry(id,-amt,'spend','Trả nợ');sp.sys=1;State.vipLog.push(sp)}
   save();renderVip(true);showToast('Đã thu nợ '+vmoney(amt));
+}
+function debtWriteOff(debtId,vid){
+  const v=State.vips[vid];if(!v||v.del)return;
+  const row=debtInfo(vid).rows.find(r=>r.id===debtId&&r.rem>0);if(!row)return showToast('Khoản nợ này đã được xử lý','error');
+  requireAdmin(`Xóa khoản nợ ${vmoney(row.rem)} của "${v.name}"`,()=>{
+    const cur=debtInfo(vid).rows.find(r=>r.id===debtId&&r.rem>0);if(!cur)return showToast('Khoản nợ này đã được xử lý','error');
+    askConfirm(`Xóa khoản nợ ${vmoney(cur.rem)} (${cur.note||'Ghi nợ'}) của ${v.name}? Khoản này sẽ không còn phải thu.`,()=>{
+      const e=logEntry(vid,cur.rem,'debtpay','Xóa nợ: '+(cur.note||'Ghi nợ'));e.ref=debtId;e.method='Xóa nợ';State.vipLog.push(e);
+      save();renderVip(true);showToast('Đã xóa khoản nợ');
+    },'Xóa nợ');
+  });
 }
 function debtAdd(id){
   const v=State.vips[id];if(!v||v.del)return;const amt=parseVnd($('db-amt-'+id).value),due=$('db-due-'+id).value,note=$('db-note-'+id).value.trim();
@@ -781,8 +825,8 @@ function renderVip(force){
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded',()=>{
   startApp();renderTableSelector();renderChips();renderPOSMenu();renderVisualMenu();renderStockInputs();updateCartUI();switchTab('pos');
-  ['payment-modal','export-modal','confirm-modal','menu-item-modal','vip-modal'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target.id===id)$(id).classList.replace('flex','hidden')}));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePaymentModal();closeExportModal();closeConfirm();closeMenuItemModal();closeVipModal();toggleCart(false)}});
+  ['payment-modal','export-modal','confirm-modal','menu-item-modal','vip-modal','auth-modal'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target.id===id)$(id).classList.replace('flex','hidden')}));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePaymentModal();closeExportModal();closeConfirm();closeMenuItemModal();closeVipModal();closeAuthModal();toggleCart(false)}});
   window.addEventListener('popstate',e=>{if($('cart-panel').classList.contains('open')){toggleCart(false,true);return}switchTab((e.state&&e.state.tab)||'pos',true)});
 });
 let curTab='pos';
@@ -840,7 +884,7 @@ function clearStock(){
 }
 function clearHistory(){
   if(!State.history.length)return showToast('Lịch sử đang trống','error');
-  askConfirm('Xóa toàn bộ lịch sử giao dịch và kiểm kê? Không thể hoàn tác.',()=>{State.history=[];State.clearedAt=Date.now();save();renderHistoryTab();showToast('Đã xóa lịch sử')},'Xóa tất cả');
+  askConfirm('Xóa toàn bộ lịch sử hóa đơn và kiểm kê? Không thể hoàn tác. (Sổ deposit và nợ của khách VIP vẫn được giữ.)',()=>{State.history=[];State.clearedAt=Date.now();save();renderHistoryTab();showToast('Đã xóa lịch sử')},'Xóa tất cả');
 }
 function totals(cart){const s=cart.reduce((a,x)=>a+x.price*x.qty,0),p=State.discounts[State.activeTable]||0,d=s*p/100,v=(s-d)*VAT;return{s,d,p,v,t:s-d+v}}
 function setDiscount(p){if(p)State.discounts[State.activeTable]=p;else delete State.discounts[State.activeTable];save();updateCartUI()}
@@ -941,15 +985,32 @@ function confirmShiftClose(){
 }
 
 // ===== LỊCH SỬ =====
+let histVipOnly=false;
+function vipEvents(){return State.vipLog.filter(l=>l.date&&!(l.type==='spend'&&(l.sys||l.note==='Trả nợ'))).map(l=>({type:'vip',date:l.date,_k:l.ts||0,l}))}
+function vipEventInfo(l){
+  const v=State.vips[l.vid],name=v?v.name:'(khách đã xóa)',amt=vmoney(Math.abs(l.amt));let label,cls,sign;
+  if(l.type==='topup'){label='Nạp deposit';cls='text-moss';sign='+'}
+  else if(l.type==='spend'){label=l.oid?'Trừ deposit (hóa đơn)':'Trừ deposit';cls='text-red-700';sign='−'}
+  else if(l.type==='debt'){label='Ghi nợ'+(l.due?' • hẹn trả '+fmtDate(l.due):'');cls='text-red-700';sign='+'}
+  else if(l.method==='Xóa nợ'){label='Xóa nợ';cls='text-wood/70';sign='−'}
+  else{label='Thu nợ'+(l.method?' • '+l.method:'');cls='text-moss';sign='−'}
+  return{name,label,cls,sign,amt,note:l.note||'',time:l.time||''};
+}
+function vipEventHTML(l){
+  const i=vipEventInfo(l);
+  return `<div class="bg-amber-50/70 rounded-xl border border-wood/15 p-3 flex justify-between gap-3"><span class="min-w-0"><span class="font-bold"><i class="fa-solid fa-crown mr-1.5 text-moss"></i>${esc(i.name)}</span> <span class="text-xs text-wood/50 ml-1 whitespace-nowrap">${esc(i.time)}</span><span class="block text-xs font-bold ${i.cls}">${esc(i.label)}</span>${i.note?`<span class="block text-xs text-wood/60">${esc(i.note)}</span>`:''}</span><b class="flex-shrink-0 ${i.cls}">${i.sign}${i.amt}</b></div>`;
+}
 function renderHistoryTab(){
   const orders=State.history.filter(h=>h.type==='order');
   $('history-total-revenue').innerText='Thu: '+money(orders.reduce((a,h)=>a+h.total,0));
-  $('history-empty').classList.toggle('hidden',State.history.length>0);
-  const dates=[...new Set(State.history.map(h=>h.date))];
+  const items=[...(histVipOnly?[]:State.history.map(h=>({...h,_k:h.id}))),...vipEvents()].sort((a,b)=>b._k-a._k);
+  $('history-empty').classList.toggle('hidden',items.length>0);
+  const hb=$('hist-vip-btn');hb.classList.toggle('bg-moss',histVipOnly);hb.classList.toggle('text-cream',histVipOnly);hb.classList.toggle('bg-white',!histVipOnly);hb.classList.toggle('text-wood/70',!histVipOnly);
+  const dates=[...new Set(items.map(h=>h.date))];
   $('history-list').innerHTML=dates.map(d=>{
-    const day=State.history.filter(h=>h.date===d),rev=day.filter(h=>h.type==='order').reduce((a,h)=>a+h.total,0);
-    return `<div><div class="flex justify-between items-baseline mb-2 px-1"><h3 class="font-extrabold text-wood">${fmtDate(d)}</h3><span class="text-moss font-bold text-sm">${money(rev)}</span></div><div class="space-y-2">`+
-    day.map(h=>h.type==='order'?`<details class="bg-white rounded-xl border border-wood/10 shadow-sm"><summary class="flex justify-between items-center p-3 cursor-pointer list-none">
+    const day=items.filter(h=>h.date===d),rev=day.filter(h=>h.type==='order').reduce((a,h)=>a+h.total,0);
+    return `<div><div class="flex justify-between items-baseline mb-2 px-1"><h3 class="font-extrabold text-wood">${fmtDate(d)}</h3><span class="text-moss font-bold text-sm">${histVipOnly?'':money(rev)}</span></div><div class="space-y-2">`+
+    day.map(h=>h.type==='vip'?vipEventHTML(h.l):h.type==='order'?`<details class="bg-white rounded-xl border border-wood/10 shadow-sm"><summary class="flex justify-between items-center p-3 cursor-pointer list-none">
       <span class="whitespace-nowrap"><span class="font-bold">${esc(h.table)}</span> <span class="text-xs text-wood/50 ml-1">${h.time} • ${h.method}</span></span><span class="font-extrabold text-moss">${money(h.total)}</span></summary>
       <div class="px-3 pb-3 text-sm space-y-1 border-t border-wood/10 pt-2">${h.items.map(x=>`<div class="flex justify-between"><span>${x.qty} × ${esc(x.name)}</span><span>${money(x.price*x.qty)}</span></div>`).join('')}
       ${h.discount?`<div class="flex justify-between text-red-700 text-xs pt-1"><span>${h.discPct===100?'On the house':'Giảm '+h.discPct+'%'}</span><span>−${money(h.discount)}</span></div>${h.discNote?`<div class="text-xs text-red-700/80 italic">Lý do: ${esc(h.discNote)}</div>`:''}`:''}${h.vipName?`<div class="text-xs text-moss font-bold pt-1"><i class="fa-solid fa-crown mr-1"></i>Khách VIP: ${esc(h.vipName)}</div>`:''}${h.deposit?`<div class="flex justify-between text-xs text-moss"><span>Trừ deposit</span><span>−${vmoney(h.deposit)}</span></div>`:''}${h.debt?`<div class="flex justify-between text-xs text-red-700 font-bold"><span>Ghi nợ (hẹn trả ${h.dueDate?fmtDate(h.dueDate):'—'})</span><span>${vmoney(h.debt)}</span></div>`:''}<div class="flex justify-between text-wood/60 text-xs pt-1"><span>VAT 10%</span><span>${money(h.vat)}</span></div></div></details>`
@@ -960,7 +1021,7 @@ function renderHistoryTab(){
 
 // ===== XUẤT PDF =====
 function openExportModal(){
-  const dates=[...new Set(State.history.map(h=>h.date))];
+  const dates=[...new Set([...State.history.map(h=>h.date),...vipEvents().map(e=>e.date)])].sort().reverse();
   if(!dates.length)return showToast('Chưa có dữ liệu để xuất','error');
   $('export-dates-list').innerHTML=dates.map(d=>`<label class="flex items-center gap-3 bg-white rounded-xl p-3 border border-wood/10 cursor-pointer"><input type="checkbox" value="${d}" checked class="w-5 h-5 accent-[#4A5D4E]"><span class="font-bold">${fmtDate(d)}</span></label>`).join('');
   $('export-modal').classList.replace('hidden','flex');
@@ -974,7 +1035,8 @@ function confirmExportPDF(){
     const day=State.history.filter(h=>h.date===d),orders=day.filter(h=>h.type==='order'),rev=orders.reduce((a,h)=>a+h.total,0);total+=rev;
     return `<h2 style="margin:18px 0 6px;color:#4A5D4E;font-size:15px">${fmtDate(d)} — ${orders.length} đơn — ${money(rev)}</h2>
     <table style="width:100%;border-collapse:collapse;font-size:11px">${orders.map(h=>`<tr style="border-bottom:1px solid #ddd"><td style="padding:4px;width:90px;vertical-align:top"><b>${esc(h.table)}</b><br>${h.time}<br>${h.method}</td><td style="padding:4px">${h.items.map(x=>`${x.qty} × ${esc(x.name)}`).join('<br>')}</td><td style="padding:4px;text-align:right;vertical-align:top"><b>${money(h.total)}</b>${h.discount?`<br><span style="font-size:10px">Giảm ${h.discPct}%</span>`:''}</td></tr>`).join('')}</table>`+
-    day.filter(h=>h.type==='stock').map(h=>`<p style="font-size:11px;margin:8px 0 2px"><b>Kiểm kê ${h.time}:</b> ${Object.entries(h.stock).map(([k,v])=>`${esc(k)}: ${esc(v)}`).join(' • ')}</p>`).join('');
+    day.filter(h=>h.type==='stock').map(h=>`<p style="font-size:11px;margin:8px 0 2px"><b>Kiểm kê ${h.time}:</b> ${Object.entries(h.stock).map(([k,v])=>`${esc(k)}: ${esc(v)}`).join(' • ')}</p>`).join('')+
+    (()=>{const ev=vipEvents().filter(e=>e.date===d).sort((a,b)=>a._k-b._k);return ev.length?`<p style="font-size:12px;margin:12px 0 3px;color:#4A5D4E"><b>Giao dịch khách VIP (deposit, nợ)</b></p><table style="width:100%;border-collapse:collapse;font-size:11px">${ev.map(e=>{const i=vipEventInfo(e.l);return `<tr style="border-bottom:1px solid #ddd"><td style="padding:4px;width:60px;vertical-align:top">${esc(i.time)}</td><td style="padding:4px"><b>${esc(i.name)}</b> — ${esc(i.label)}${i.note?`<br><span style="font-size:10px">${esc(i.note)}</span>`:''}</td><td style="padding:4px;text-align:right;vertical-align:top;white-space:nowrap"><b>${i.sign}${i.amt}</b></td></tr>`}).join('')}</table>`:''})();
   }).join('');
   const el=document.createElement('div');
   el.style.cssText='padding:20px;font-family:Montserrat,sans-serif;color:#2C1E16;width:700px';
