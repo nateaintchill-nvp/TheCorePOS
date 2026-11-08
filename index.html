@@ -115,13 +115,14 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
 
 <!-- MENU -->
 <section id="tab-menu" class="tab-content hidden h-full overflow-y-auto no-scrollbar p-4 md:p-10">
-  <div class="max-w-4xl mx-auto mb-3 flex items-center justify-between gap-2"><button onclick="switchTab('pos')" class="flex-shrink-0 px-3 py-2 rounded-full bg-white border border-wood/20 font-bold text-sm active:scale-95 transition"><i class="fa-solid fa-arrow-left mr-1"></i>Bán hàng</button><button onclick="openMenuItemModal()" class="flex-shrink-0 px-4 py-2 rounded-full bg-moss text-cream font-bold text-sm active:scale-95 transition"><i class="fa-solid fa-plus mr-1.5"></i>Món mới</button></div>
-  <div id="menu-admin-bar" class="hidden max-w-4xl mx-auto mb-3 items-center justify-between gap-2 bg-moss/10 text-moss rounded-xl px-3 py-2 text-xs font-bold"><span><i class="fa-solid fa-user-shield mr-1.5"></i>Chế độ chủ quán: chạm bút để sửa, thùng rác để xóa</span><button onclick="logoutAdmin()" class="flex-shrink-0 underline">Đăng xuất</button></div>
+  <div id="menu-toprow" class="max-w-4xl mx-auto mb-3 flex items-center justify-between gap-2"><button onclick="switchTab('pos')" class="flex-shrink-0 px-3 py-2 rounded-full bg-white border border-wood/20 font-bold text-sm active:scale-95 transition"><i class="fa-solid fa-arrow-left mr-1"></i>Bán hàng</button><button onclick="openMenuItemModal()" class="flex-shrink-0 px-4 py-2 rounded-full bg-moss text-cream font-bold text-sm active:scale-95 transition"><i class="fa-solid fa-plus mr-1.5"></i>Món mới</button></div>
+  <div id="menu-admin-bar" class="hidden max-w-4xl mx-auto mb-3 items-center justify-between gap-2 bg-moss/10 text-moss rounded-xl px-3 py-2 text-xs font-bold"><span><i class="fa-solid fa-user-shield mr-1.5"></i>Chế độ chủ quán: chạm bút để sửa, thùng rác để xóa</span><span class="flex-shrink-0 flex items-center gap-3"><button onclick="setLocalMenu(true)" class="underline">Xem menu −20%</button><button onclick="logoutAdmin()" class="underline">Đăng xuất</button></span></div>
   <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-lg border border-wood/10">
-    <div class="text-center mb-8">
+    <div id="menu-head" onclick="menuSecretTap()" class="text-center mb-8 pb-2 select-none cursor-pointer" style="touch-action:manipulation">
       <h1 class="text-2xl font-extrabold text-moss tracking-[.25em]">THE CORE</h1>
       <p class="text-wood/60 text-sm mt-1">Speak Easy Bar</p>
       <p class="text-wood/50 mt-1 whitespace-nowrap" style="font-size:clamp(9px,3.6vw,12px)">Analog Sound • Crafted Spirits • Unhurried Vibes</p>
+      <p id="local-menu-badge" class="hidden mt-3 bg-moss text-cream rounded-full px-4 py-1.5 text-xs font-extrabold tracking-wide"><i class="fa-solid fa-heart mr-1.5"></i>ƯU ĐÃI BẠN BÈ ĐỊA PHƯƠNG • GIẢM 20%</p>
     </div>
     <div id="visual-menu-container" class="columns-1 md:columns-2 gap-10"></div>
     <p class="text-center text-wood/50 text-xs mt-8">Giá tính theo nghìn đồng • Prices in thousand VND (x1.000đ)</p>
@@ -140,6 +141,7 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
     </div>
   </div>
 </section>
+
 
 <!-- LỊCH SỬ -->
 <section id="tab-history" class="tab-content hidden h-full overflow-y-auto no-scrollbar p-4 md:p-8">
@@ -169,22 +171,27 @@ WWy1JV8CEjMPiDI+q8iNCiSfAKlOLSJLlF8CUmq4HLw5gHTR3+gCQJl6ACGx87t0bRd8DUsie+P6LhzV
     <p class="text-wood/60 text-sm mt-1 mb-5">Dùng cùng một địa chỉ đồng bộ và mã đồng bộ trên mọi máy để dữ liệu (đơn, kho, lịch sử) tự động khớp nhau.</p>
     <div class="bg-white rounded-2xl shadow-sm border border-wood/10 p-4 space-y-4">
       <div class="flex items-center gap-2 text-sm font-bold"><span id="set-dot" class="w-2.5 h-2.5 rounded-full bg-gray-400 flex-shrink-0"></span><span id="set-status">Chỉ lưu trên máy này</span></div>
+      <div id="sync-fields" class="space-y-4">
       <div>
         <label class="block text-xs font-bold mb-1">Địa chỉ đồng bộ (Firebase Realtime Database)</label>
-        <input id="set-url" autocapitalize="off" autocorrect="off" class="w-full bg-cream border border-wood/20 rounded-xl px-3 py-2.5 text-base font-medium" placeholder="https://ten-du-an-default-rtdb.firebaseio.com">
+        <input id="set-url" autocomplete="off" spellcheck="false" oncopy="return false" oncut="return false" oncontextmenu="return false" ondragstart="return false" autocapitalize="off" autocorrect="off" class="w-full bg-cream border border-wood/20 rounded-xl px-3 py-2.5 text-base font-medium" placeholder="https://ten-du-an-default-rtdb.firebaseio.com">
       </div>
       <div>
         <label class="block text-xs font-bold mb-1">Mã đồng bộ</label>
-        <input id="set-code" autocapitalize="off" autocorrect="off" maxlength="40" class="w-full bg-cream border border-wood/20 rounded-xl px-3 py-2.5 text-base font-medium" placeholder="VD: the-core-munne">
+        <input id="set-code" autocomplete="off" spellcheck="false" oncopy="return false" oncut="return false" oncontextmenu="return false" ondragstart="return false" autocapitalize="off" autocorrect="off" maxlength="40" class="w-full bg-cream border border-wood/20 rounded-xl px-3 py-2.5 text-base font-medium" placeholder="VD: the-core-munne">
         <p class="text-xs text-wood/50 mt-1">Các máy nhập cùng mã sẽ dùng chung dữ liệu. Hãy đặt mã khó đoán, ai biết cả địa chỉ lẫn mã đều xem được dữ liệu.</p>
       </div>
       <div class="grid grid-cols-2 gap-2">
-        <button onclick="saveSyncSettings()" class="col-span-2 bg-moss text-cream py-3 rounded-xl font-bold active:scale-95 transition"><i class="fa-solid fa-link mr-2"></i>Lưu &amp; kết nối</button>
+        <button id="set-save-btn" onclick="saveSyncSettings()" class="col-span-2 bg-moss text-cream py-3 rounded-xl font-bold active:scale-95 transition"><i class="fa-solid fa-link mr-2"></i>Lưu &amp; kết nối</button>
+        <button id="set-edit-btn" onclick="startEditSync()" class="hidden col-span-2 bg-wood/10 py-3 rounded-xl font-bold active:scale-95 transition"><i class="fa-solid fa-pen mr-2"></i>Đổi liên kết</button>
+        <button id="set-cancel-btn" onclick="cancelEditSync()" class="hidden col-span-2 bg-white border border-wood/20 py-2.5 rounded-xl font-bold text-sm active:scale-95 transition">Hủy đổi</button>
         <button onclick="syncNow()" class="py-2.5 rounded-xl bg-wood/10 font-bold text-sm active:scale-95 transition"><i class="fa-solid fa-rotate mr-1"></i>Đồng bộ ngay</button>
         <button onclick="disableSync()" class="py-2.5 rounded-xl bg-white border border-red-300 text-red-700 font-bold text-sm active:scale-95 transition"><i class="fa-solid fa-link-slash mr-1"></i>Tắt đồng bộ</button>
       </div>
+      </div>
+      <p id="sync-locked" class="hidden text-sm font-semibold text-wood/70 bg-cream rounded-xl px-3 py-3 text-center"><i class="fa-solid fa-lock mr-1.5 text-moss"></i>Phần đồng bộ chỉ dành cho chủ quán. Đăng nhập chủ quán ở trên để xem và thay đổi.</p>
     </div>
-    <details class="mt-4 bg-white rounded-2xl border border-wood/10 p-4 text-sm">
+    <details id="sync-guide" class="mt-4 bg-white rounded-2xl border border-wood/10 p-4 text-sm">
       <summary class="font-bold text-moss cursor-pointer">Hướng dẫn tạo địa chỉ đồng bộ</summary>
       <ol class="list-decimal pl-5 mt-3 space-y-1.5 text-wood/80">
         <li>Vào console.firebase.google.com, tạo dự án mới.</li>
@@ -471,6 +478,7 @@ function refreshAll(){
   renderChips();renderPOSMenu();renderVisualMenu();
   if(curTab==='history')renderHistoryTab();
   if(curTab==='vip')renderVip();
+  if(curTab==='settings')renderSyncGate();
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)pullMerge()});
 
@@ -491,29 +499,47 @@ function startApp(){
   pullMerge();restartPoll();
 }
 function restartPoll(){clearInterval(pollT);if(cloud.on())pollT=setInterval(pullMerge,10000)}
-function renderSettings(){
-  renderAdminCard();
-  if(!$('set-url'))return;
-  $('set-url').value=CLOUD_URL;$('set-code').value=SESSION?SESSION.id:getSyncCode();
+let syncEditing=false;const SYNC_MASK='••••••••••••';
+const syncLocked=()=>!!State.admin&&!isAdmin();
+function renderSyncGate(){
+  if(!$('sync-fields'))return;const lk=syncLocked();
+  $('sync-fields').classList.toggle('hidden',lk);$('sync-guide').classList.toggle('hidden',lk);$('sync-locked').classList.toggle('hidden',!lk);
+  if(lk)syncEditing=false;
 }
+const needOwnerSync=()=>{if(syncLocked()){showToast('Chỉ chủ quán mới cấu hình được đồng bộ','error');renderSyncGate();return true}return false};
+function renderSettings(){
+  renderAdminCard();renderSyncGate();
+  if(!$('set-url'))return;
+  const locked=cloud.on()&&!syncEditing,u=$('set-url'),c=$('set-code');
+  u.readOnly=c.readOnly=locked;
+  u.value=locked?SYNC_MASK:(syncEditing?'':CLOUD_URL);
+  c.value=locked?SYNC_MASK:(syncEditing?'':(SESSION?SESSION.id:getSyncCode()));
+  [u,c].forEach(e=>{e.classList.toggle('opacity-50',locked);e.classList.toggle('select-none',locked);e.style.userSelect=e.style.webkitUserSelect=locked?'none':''});
+  $('set-save-btn').classList.toggle('hidden',locked);$('set-edit-btn').classList.toggle('hidden',!locked);$('set-cancel-btn').classList.toggle('hidden',!syncEditing);
+}
+function startEditSync(){if(needOwnerSync())return;syncEditing=true;renderSettings();setTimeout(()=>$('set-url').focus(),30)}
+function cancelEditSync(){syncEditing=false;renderSettings()}
 function saveSyncSettings(){
+  if(needOwnerSync())return;
   const u=$('set-url').value.trim().replace(/\/+$/,''),code=slug($('set-code').value.trim());
   if(!u)return showToast('Nhập địa chỉ đồng bộ, hoặc bấm Tắt đồng bộ','error');
   if(!URL_RE.test(u))return showToast('Địa chỉ phải dạng https://…firebaseio.com hoặc …firebasedatabase.app','error');
   if(!code)return showToast('Nhập mã đồng bộ','error');
   try{localStorage.setItem('thecore_cloud_url',u);localStorage.setItem(SYNC_CODE_KEY,code)}catch(e){}
-  CLOUD_URL=u;SESSION={id:code};renderSettings();setSync('busy');
+  CLOUD_URL=u;SESSION={id:code};syncEditing=false;renderSettings();setSync('busy');
   cloud.get('profiles/'+code+'/data').then(()=>{showToast('Đã kết nối đồng bộ');pullMerge();restartPoll()}).catch(()=>{setSync('err');showToast('Không kết nối được, kiểm tra địa chỉ và mạng','error')});
 }
 function syncNow(){
+  if(needOwnerSync())return;
   if(!cloud.on())return showToast('Chưa bật đồng bộ','error');
   setSync('busy');pullMerge().then(()=>showToast('Đã đồng bộ'));
 }
 function disableSync(){
+  if(needOwnerSync())return;
   if(!cloud.on())return showToast('Đồng bộ đang tắt','error');
   askConfirm('Tắt đồng bộ? Dữ liệu trên máy này vẫn được giữ lại.',()=>{
     try{localStorage.removeItem('thecore_cloud_url')}catch(e){}
-    CLOUD_URL=CLOUD_DEFAULT;clearInterval(pollT);clearTimeout(pushT);setSync('off');renderSettings();showToast('Đã tắt đồng bộ');
+    CLOUD_URL=CLOUD_DEFAULT;syncEditing=false;clearInterval(pollT);clearTimeout(pushT);setSync('off');renderSettings();showToast('Đã tắt đồng bộ');
   },'Tắt đồng bộ');
 }
 function showToast(msg,type='success'){
@@ -586,6 +612,7 @@ function deleteMenuItem(id){
 }
 function deleteMenuItemFromModal(){const id=editingMenuId;closeMenuItemModal();if(id)deleteMenuItem(id)}
 
+
 // ===== CHỦ QUÁN (đăng nhập) =====
 const SHA_K=[],SHA_H=[];(()=>{let n=2;const pr=[];while(pr.length<64){if(pr.every(p=>n%p))pr.push(n);n++}pr.forEach((p,i)=>{SHA_K[i]=Math.floor((Math.cbrt(p)%1)*4294967296);if(i<8)SHA_H[i]=Math.floor((Math.sqrt(p)%1)*4294967296)})})();
 const SHA_W=new Uint32Array(64),ror=(x,n)=>(x>>>n)|(x<<(32-n));
@@ -611,19 +638,19 @@ let adminUntil=0;try{adminUntil=+sessionStorage.getItem('thecore_admin_until')||
 const isAdmin=()=>!!State.admin&&adminUntil>Date.now();
 function setAdminSession(on){adminUntil=on?Date.now()+4*3600*1000:0;try{sessionStorage.setItem('thecore_admin_until',String(adminUntil))}catch(e){}}
 let adminShown=false,loginFails=0,loginLockUntil=0;
-function renderAdminUI(){adminShown=isAdmin();renderAdminCard();renderVisualMenu()}
+function renderAdminUI(){adminShown=isAdmin();renderAdminCard();renderSyncGate();renderVisualMenu()}
 setInterval(()=>{if(adminShown!==isAdmin())renderAdminUI()},20000);
 function renderAdminCard(){
   const el=$('admin-card');if(!el)return;const a=State.admin,inp='w-full bg-white border border-wood/20 rounded-xl px-3 py-2.5 text-base font-medium';
   const head='<h3 class="text-lg font-extrabold text-moss"><i class="fa-solid fa-user-shield mr-2 text-wood"></i>Đăng nhập chủ quán</h3>';
-  if(!a)el.innerHTML=head+`<p class="text-wood/60 text-sm mt-1 mb-3">Chưa có tài khoản chủ quán. Chủ quán tạo ngay một lần duy nhất để được sửa/xóa món trong Menu. Sau khi tạo, không ai tạo thêm được tài khoản khác.</p>
-    <div class="bg-white rounded-2xl shadow-sm border border-wood/10 p-4 space-y-3">
+  if(!a)el.innerHTML=head+`
+    <div class="bg-white rounded-2xl shadow-sm border border-wood/10 p-4 mt-3 space-y-3">
       <input id="adm-new-user" autocomplete="username" autocapitalize="off" maxlength="30" class="${inp}" placeholder="Tên đăng nhập (từ 3 ký tự)">
       <input id="adm-new-pass" type="password" autocomplete="new-password" class="${inp}" placeholder="Mật khẩu (từ 6 ký tự)">
       <input id="adm-new-pass2" type="password" autocomplete="new-password" class="${inp}" placeholder="Nhập lại mật khẩu" onkeydown="if(event.key==='Enter')createAdmin()">
       <button id="adm-btn" onclick="createAdmin()" class="w-full bg-moss text-cream py-3 rounded-xl font-bold active:scale-95 transition"><i class="fa-solid fa-user-plus mr-2"></i>Tạo tài khoản chủ quán</button></div>`;
-  else if(!isAdmin())el.innerHTML=head+`<p class="text-wood/60 text-sm mt-1 mb-3">Chỉ chủ quán đăng nhập mới sửa hoặc xóa được món trong Menu. Nhân viên vẫn thêm được món mới.</p>
-    <div class="bg-white rounded-2xl shadow-sm border border-wood/10 p-4 space-y-3">
+  else if(!isAdmin())el.innerHTML=head+`
+    <div class="bg-white rounded-2xl shadow-sm border border-wood/10 p-4 mt-3 space-y-3">
       <input id="adm-user" autocomplete="username" autocapitalize="off" class="${inp}" placeholder="Tên đăng nhập">
       <input id="adm-pass" type="password" autocomplete="current-password" class="${inp}" placeholder="Mật khẩu" onkeydown="if(event.key==='Enter')loginAdmin()">
       <button id="adm-btn" onclick="loginAdmin()" class="w-full bg-moss text-cream py-3 rounded-xl font-bold active:scale-95 transition"><i class="fa-solid fa-right-to-bracket mr-2"></i>Đăng nhập</button></div>`;
@@ -836,7 +863,7 @@ function switchTab(id,fromPop){
   document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('bg-moss','text-cream');b.classList.add('hover:bg-wood-light')});
   $('tab-'+id).classList.remove('hidden');
   const b=$('btn-tab-'+id);b.classList.remove('hover:bg-wood-light');b.classList.add('bg-moss','text-cream');
-  if(id==='history')renderHistoryTab();if(id==='settings')renderSettings();if(id==='vip')renderVip(true);if(id==='menu')renderVisualMenu();
+  if(id==='history')renderHistoryTab();if(id==='settings')renderSettings();if(id==='vip')renderVip(true);if(id!=='menu')localMenu=false;if(id==='menu')renderVisualMenu();
 }
 
 // ===== POS =====
@@ -942,11 +969,18 @@ function confirmPayment(){
 }
 
 // ===== MENU TAB =====
+let localMenu=false,secretTaps=[];const LOCAL_MENU_PCT=20;
+const fmtP=n=>(Math.round(n*100)/100).toLocaleString('vi-VN',{maximumFractionDigits:2});
+const priceHTML=pr=>localMenu?`<span class="whitespace-nowrap"><span class="text-wood/40 line-through font-semibold mr-1.5">${fmtP(pr)}</span><span class="text-moss">${fmtP(pr*(100-LOCAL_MENU_PCT)/100)}</span></span>`:`<span class="text-moss whitespace-nowrap">${fmtP(pr)}</span>`;
+function setLocalMenu(on){localMenu=on;renderVisualMenu();try{navigator.vibrate&&navigator.vibrate(on?[40,40,40]:40)}catch(e){}}
+function menuSecretTap(){const n=Date.now();secretTaps=secretTaps.filter(t=>n-t<5000);secretTaps.push(n);if(secretTaps.length>=5){secretTaps=[];setLocalMenu(!localMenu)}}
 function renderVisualMenu(){
-  const adm=isAdmin(),bar=$('menu-admin-bar');if(bar){bar.classList.toggle('hidden',!adm);bar.classList.toggle('flex',adm)}
+  const adm=isAdmin()&&!localMenu,bar=$('menu-admin-bar');if(bar){bar.classList.toggle('hidden',!adm);bar.classList.toggle('flex',adm)}
+  const tr=$('menu-toprow');if(tr){tr.classList.toggle('hidden',localMenu);tr.classList.toggle('flex',!localMenu)}
+  const bd=$('local-menu-badge');if(bd){bd.classList.toggle('hidden',!localMenu);bd.classList.toggle('inline-block',localMenu)}
   $('visual-menu-container').innerHTML=MENU_DATA.filter(c=>adm||c.items.length).map(c=>`<div class="break-inside-avoid mb-8">
     <h3 class="font-extrabold text-moss text-lg">${esc(c.category)}</h3><p class="text-xs text-wood/50 mb-3 pb-2 border-b border-wood/15">${esc(c.sub)}</p>
-    ${c.items.length?'':'<p class="text-xs text-wood/40 italic">Chưa có món</p>'}${c.items.map(it=>`<div class="mb-2.5"><div class="flex justify-between gap-3 font-bold text-sm"><span class="min-w-0">${fmtName(it[0])}</span><span class="flex items-start gap-1.5 flex-shrink-0"><span class="text-moss whitespace-nowrap">${it[1].toLocaleString('vi-VN')}</span>${adm?`<button onclick="openMenuItemModal('${it[3]}')" aria-label="Sửa ${esc(it[0])}" class="w-7 h-7 -mt-1 rounded-lg bg-wood/10 text-wood active:scale-95"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="deleteMenuItem('${it[3]}')" aria-label="Xóa ${esc(it[0])}" class="w-7 h-7 -mt-1 rounded-lg bg-red-50 text-red-700 active:scale-95"><i class="fa-solid fa-trash-can text-xs"></i></button>`:''}</span></div>${it[2]?`<p class="text-xs text-wood/55 leading-snug">${esc(it[2])}</p>`:''}</div>`).join('')}</div>`).join('');
+    ${c.items.length?'':'<p class="text-xs text-wood/40 italic">Chưa có món</p>'}${c.items.map(it=>`<div class="mb-2.5"><div class="flex justify-between gap-3 font-bold text-sm"><span class="min-w-0">${fmtName(it[0])}</span><span class="flex items-start gap-1.5 flex-shrink-0">${priceHTML(it[1])}${adm?`<button onclick="openMenuItemModal('${it[3]}')" aria-label="Sửa ${esc(it[0])}" class="w-7 h-7 -mt-1 rounded-lg bg-wood/10 text-wood active:scale-95"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="deleteMenuItem('${it[3]}')" aria-label="Xóa ${esc(it[0])}" class="w-7 h-7 -mt-1 rounded-lg bg-red-50 text-red-700 active:scale-95"><i class="fa-solid fa-trash-can text-xs"></i></button>`:''}</span></div>${it[2]?`<p class="text-xs text-wood/55 leading-snug">${esc(it[2])}</p>`:''}</div>`).join('')}</div>`).join('');
 }
 
 // ===== KHO =====
